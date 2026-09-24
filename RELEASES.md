@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## 23.0
+
+- Reformulamos a interface com cards clicáveis e ícones vetoriais para cada periférico.
+- Destacamos periféricos ativos com borda verde pulsante.
+- Criamos uma lista resumida com periférico, porta e resultado do teste.
+- Movemos os detalhes técnicos para uma janela em duas colunas aberta pelo card.
+
 ## 22.0
 
 - Mantivemos um link permanente para baixar sempre a versão mais recente.
