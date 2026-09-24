@@ -1,0 +1,17 @@
+{
+  "serial": {
+    "baudrate": 9600,
+    "timeout": 1.2
+  },
+  "scale": {
+    "request_hex": "05",
+    "weight_regex": "[-+]?\\d+(?:[.,]\\d+)?",
+    "unit": "kg"
+  },
+  "pinpad": {
+    "request_hex": "05"
+  },
+  "aliases": {
+    "ttyUSB0": "scale"
+  }
+}
