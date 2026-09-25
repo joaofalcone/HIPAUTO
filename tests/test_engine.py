@@ -56,12 +56,55 @@ class P05Tests(unittest.TestCase):
         self.assertIsNone(protocols.parse_weight("abc", {"weight_regex": "("}))
 
 
+class EscPosTests(unittest.TestCase):
+    def test_status_byte_rules(self):
+        self.assertTrue(protocols.is_escpos_status(b"\x12"))
+        self.assertTrue(protocols.is_escpos_status(b"\x16"))
+        self.assertFalse(protocols.is_escpos_status(b"\x05"))
+        self.assertFalse(protocols.is_escpos_status(b"\x12\x12"))
+
+    def test_pty_printer_answers_status(self):
+        master, slave = pty.openpty()
+
+        def printer():
+            if os.read(master, 3) == b"\x10\x04\x01":
+                os.write(master, b"\x16")
+
+        thread = threading.Thread(target=printer)
+        thread.start()
+        try:
+            result = protocols.probe_escpos(os.ttyname(slave))
+        finally:
+            thread.join(1)
+            os.close(master)
+            os.close(slave)
+        self.assertTrue(result["matched"])
+
+
 class CatalogTests(unittest.TestCase):
     def test_classification(self):
         self.assertEqual(catalog.classify("Gertec PPC930"), "pinpad")
         self.assertEqual(catalog.classify("Gertec TEC-E 44 keyboard"), "keyboard")
         self.assertEqual(catalog.classify("ELAN Touchpad"), "unknown")
         self.assertEqual(catalog.classify("eGalax TouchScreen"), "touchscreen")
+        self.assertEqual(catalog.classify("Tanca TS-1000 SAT"), "sat")
+        self.assertEqual(catalog.classify("Toledo Prix 4"), "scale")
+        self.assertEqual(catalog.classify("Bematech MP-4200 TH"), "printer")
+        self.assertEqual(catalog.classify("Satellite Pro"), "unknown")
+
+    def test_usb_database_is_official_and_rich(self):
+        db = catalog.usb_database()
+        self.assertTrue(db["usbIdsVersion"])
+        self.assertGreater(len(db["products"]), 500)
+        self.assertEqual(catalog.usb_identity("2fe7", "0001")["category"], "sat")
+        self.assertEqual(catalog.usb_identity("3219", "0044")["manufacturer"], "SMAK")
+        self.assertEqual(catalog.usb_identity("0d3a", "0206")["category"], "cash_drawer")
+        self.assertTrue(catalog.usb_identity("067b", "2303")["adapter"])
+        self.assertEqual(catalog.usb_identity("04b8", "ffff")["category"], "printer")
+
+    def test_display_name_avoids_duplicates(self):
+        self.assertEqual(catalog.display_name("Epson", "TM-T20"), "Epson TM-T20")
+        self.assertEqual(catalog.display_name("EPSON", "EPSON TM-T20"), "EPSON TM-T20")
 
     def test_homologation_by_usb_id_and_name(self):
         self.assertEqual(catalog.homologation("pinpad", "x", "1753", "c902")["status"], "homologated")
@@ -117,6 +160,36 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(len(queues), 1)
         self.assertEqual(queues[0]["status"], "error")
 
+    def test_ieee1284_parse(self):
+        info = discovery.parse_ieee1284("MFG:EPSON;CMD:ESC/POS;MDL:TM-T20;CLS:PRINTER;")
+        self.assertEqual((info["manufacturer"], info["model"], info["commands"]), ("EPSON", "TM-T20", "ESC/POS"))
+
+    def test_adapter_port_is_not_named_after_chip_maker(self):
+        props = {"ID_VENDOR_ID": "067b", "ID_MODEL_ID": "2303", "ID_VENDOR": "Prolific"}
+        with patch.object(discovery.Path, "iterdir", return_value=[Path("/dev/ttyUSB0")]), \
+                patch.object(discovery, "udev_properties", return_value=props), \
+                patch.object(discovery, "usb_node", return_value="1-3"):
+            device = discovery.serial_devices({"aliases": {}})[0]
+        self.assertEqual(device["category"], "unknown")
+        self.assertIsNone(device["manufacturer"])
+        self.assertIn("PL2303", device["adapter"])
+
+    def test_serial_escpos_printer_identified(self):
+        device = dev(id="serial:ttyS1", category="unknown", name="Porta", port="/dev/ttyS1")
+        with patch.object(discovery, "port_in_use", return_value=False), \
+                patch.object(discovery.protocols, "probe_p05", return_value={"matched": False}), \
+                patch.object(discovery.protocols, "probe_escpos",
+                             return_value={"matched": True, "baudrate": 115200, "hex": "12"}):
+            discovery.identify_serial([device])
+        self.assertEqual((device["category"], device["port_details"]["baudrate"]), ("printer", 115200))
+
+    def test_broken_source_does_not_stop_discovery(self):
+        with patch.object(discovery, "input_devices", side_effect=RuntimeError("falhou")), \
+                patch.object(discovery, "run", return_value=(1, "")), \
+                patch.object(discovery.smak, "probe", return_value={}):
+            discovery.discover()
+        self.assertTrue(any("falhou" in item for item in discovery.LAST_ERRORS))
+
     def test_edid_identifies_monitor(self):
         edid = bytearray(128)
         edid[0:8] = b"\x00\xff\xff\xff\xff\xff\xff\x00"
@@ -124,8 +197,10 @@ class DiscoveryTests(unittest.TestCase):
         edid[8], edid[9] = code >> 8, code & 0xFF
         edid[54:59] = b"\x00\x00\x00\xfc\x00"
         edid[59:72] = b"S24F350\n     "
+        edid[21], edid[22] = 53, 30
         info = discovery.parse_edid(bytes(edid))
         self.assertEqual((info["manufacturer"], info["model"]), ("Samsung", "S24F350"))
+        self.assertEqual(info["diagonal"], 24.0)
 
     def test_scale_identification_promotes_only_valid_reply(self):
         device = dev(id="serial:ttyS4", category="unknown", name="Porta", port="/dev/ttyS4")
@@ -133,14 +208,14 @@ class DiscoveryTests(unittest.TestCase):
                  "decoded": {"kind": "weight", "payload": "00000", "weight": "0 kg"}}
         with patch.object(discovery, "port_in_use", return_value=False), \
                 patch.object(discovery.protocols, "probe_p05", return_value=probe):
-            discovery.identify_scales([device])
+            discovery.identify_serial([device])
         self.assertEqual((device["category"], device["scale_protocol"]), ("scale", "P05"))
 
     def test_busy_port_is_not_probed(self):
         device = dev(id="serial:ttyS4", category="unknown", name="Porta", port="/dev/ttyS4")
         with patch.object(discovery, "port_in_use", return_value=True), \
                 patch.object(discovery.protocols, "probe_p05") as probe:
-            discovery.identify_scales([device])
+            discovery.identify_serial([device])
         probe.assert_not_called()
 
     def test_smak_renames_ps2_keyboard(self):

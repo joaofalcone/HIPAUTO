@@ -1,5 +1,32 @@
 # Histórico de versões
 
+## 25.0
+
+Identificação de precisão para o mercado brasileiro e nova interface.
+
+**Identificação**
+- Nova base `perifericos-br.json`, gerada do banco oficial `usb.ids` (versão 2026.06.26) por `tools/gerar_base_perifericos.py`: 52 fabricantes e 870 produtos de PDV, entre eles Elgin, Gertec, SMAK, Control iD, Epson, Bixolon, Honeywell, Datalogic, Zebra, Newland, Ingenico, Verifone, Posiflex, Nitgen e Mettler Toledo.
+- Novas categorias: SAT/MF-e, gaveta, display de cliente e leitor de cartão.
+- Marcas e modelos brasileiros sem VID próprio são reconhecidos pelo nome informado pelo aparelho: Bematech, Daruma, Sweda, Tanca, Dimep, Toledo, Filizola, Urano, Ramuza, entre outras.
+- Impressoras USB informam fabricante, modelo e linguagem pelo IEEE 1284, e monitores informam resolução e tamanho.
+- Impressoras seriais são identificadas pelo status ESC/POS. O teste delas passa a acusar falta de papel, papel perto do fim e modo offline.
+- Adaptadores USB-serial (FTDI, Prolific, CH340, CP210x) não são mais confundidos com o fabricante do periférico.
+- Aparelhos idênticos em portas USB diferentes deixam de ser fundidos em um só.
+
+**Desempenho e confiabilidade**
+- As fontes de descoberta e as sondas seriais rodam em paralelo, e uma fonte com falha não esconde as demais.
+- O tempo de cada varredura aparece na interface.
+
+**Interface**
+- Hero com wallpaper técnico e indicadores clicáveis que filtram por status (Esc limpa o filtro).
+- Botões com ícone e estados de hover, pressão e foco, além de barra de progresso durante os testes.
+- Cards com elevação no hover, selo de status, glifo do tipo de conexão, spinner durante o teste e pulso suave. Cada tipo de periférico tem um ícone próprio.
+- Notificações dos resultados e estado vazio ilustrado.
+- Janela de detalhes em seções (Identificação, Conexão, Resultado e Rastreabilidade), com botão "Copiar dados".
+
+**Qualidade**
+- Dupla camada de revisão: revisão de código e suíte de precisão com cerca de 70 nomes reais do mercado, casos negativos e conferência contra a fonte oficial. São 64 testes automatizados no total.
+
 ## 24.0
 
 Consolidação completa do identificador de periféricos.

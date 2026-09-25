@@ -42,6 +42,41 @@ def probe_p05(port: str, timeout: float = 1.2) -> dict[str, Any]:
     return {"matched": bool(decoded), "hex": data.hex(" "), "decoded": decoded}
 
 
+ESCPOS_STATUS = b"\x10\x04\x01"  # DLE EOT 1: status em tempo real da impressora
+ESCPOS_BAUDS = (9600, 115200, 38400, 19200)
+
+
+def is_escpos_status(data: bytes) -> bool:
+    """ESC/POS status byte: bits 1 and 4 fixed at 1, bit 7 fixed at 0."""
+    return len(data) == 1 and (data[0] & 0x93) == 0x12
+
+
+def probe_escpos(port: str, timeout: float = 0.35) -> dict[str, Any]:
+    """Ask for the real-time printer status at common speeds. Prints nothing."""
+    for baudrate in ESCPOS_BAUDS:
+        try:
+            with open_serial(port, baudrate) as fd:
+                data = exchange(fd, ESCPOS_STATUS, timeout, limit=8)
+        except (OSError, ValueError):
+            return {"matched": False}
+        if is_escpos_status(data):
+            return {"matched": True, "baudrate": baudrate, "hex": data.hex(" ")}
+    return {"matched": False}
+
+
+def read_escpos_status(port: str, baudrate: int, timeout: float = 0.6) -> dict[str, Any]:
+    """Printer (DLE EOT 1) and paper sensor (DLE EOT 4) status. Prints nothing."""
+    with open_serial(port, baudrate) as fd:
+        printer = exchange(fd, b"\x10\x04\x01", timeout, limit=8)
+        paper = exchange(fd, b"\x10\x04\x04", timeout, limit=8)
+    if not is_escpos_status(printer):
+        return {"responding": False, "hex": (printer + paper).hex(" ")}
+    status = {"responding": True, "offline": bool(printer[0] & 0x08), "hex": (printer + paper).hex(" ")}
+    if is_escpos_status(paper):
+        status.update(paper_end=bool(paper[0] & 0x60), paper_near_end=bool(paper[0] & 0x0C))
+    return status
+
+
 def parse_weight(raw: str, settings: dict[str, Any]) -> str | None:
     try:
         match = re.search(settings.get("weight_regex") or r"[-+]?\d+(?:[.,]\d+)?", raw)

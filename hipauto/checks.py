@@ -49,6 +49,25 @@ def test_generic_scale(device: dict[str, Any]) -> dict[str, Any]:
                   raw=reading["raw"], hex=reading["data"].hex(" "))
 
 
+def test_escpos_printer(device: dict[str, Any]) -> dict[str, Any]:
+    baudrate = (device.get("port_details") or {}).get("baudrate") or 9600
+    try:
+        status = protocols.read_escpos_status(device["port"], int(baudrate))
+    except PermissionError:
+        return result("error", f"NÃO OK: sem permissão na porta da impressora; {permission_hint()}")
+    except (OSError, ValueError) as exc:
+        return result("error", f"NÃO OK: falha ao consultar a impressora ({exc})")
+    if not status["responding"]:
+        return result("error", "NÃO OK: a impressora não respondeu ao pedido de status ESC/POS", hex=status["hex"])
+    if status.get("paper_end"):
+        return result("error", "NÃO OK: impressora sem papel", hex=status["hex"])
+    if status.get("offline"):
+        return result("warning", "Impressora respondeu, mas está offline (tampa aberta ou erro)", hex=status["hex"])
+    if status.get("paper_near_end"):
+        return result("warning", "Comunicação OK, mas o papel está perto do fim", hex=status["hex"])
+    return result("ok", f"Comunicação com o PC OK: impressora ESC/POS online a {baudrate} bps", hex=status["hex"])
+
+
 def test_serial_link(device: dict[str, Any]) -> dict[str, Any]:
     port = device["port"]
     if port_in_use(port):
@@ -128,6 +147,8 @@ def run_test(device: dict[str, Any]) -> dict[str, Any]:
             return test_p05_scale(device)
         if category == "scale":
             return test_generic_scale(device)
+        if device.get("printer_protocol") == "ESC/POS":
+            return test_escpos_printer(device)
         return test_serial_link(device)
     if device.get("queue"):
         return test_printer(device)

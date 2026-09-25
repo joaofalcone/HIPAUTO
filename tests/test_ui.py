@@ -110,9 +110,40 @@ class DesktopTests(unittest.TestCase):
         self.assertIn("Nenhum periférico", self.app.empty_label.cget("text"))
 
 
+class InteractionTests(DesktopTests):
+    def test_kpi_filter_and_escape(self):
+        results = {"scale:1": {"status": "ok", "detail": "Peso"},
+                   "printer:TM": {"status": "error", "detail": "NÃO OK"}}
+        with patch.object(ui.checks, "test_device", side_effect=lambda d: results[d["id"]]):
+            self.app.test_all()
+            self.wait_until(lambda: not self.app.busy)
+        self.assertEqual(self.app.tiles["error"].value, 1)
+        self.app.set_filter("error")
+        self.app.update()
+        self.assertEqual(self.app.tree.get_children(), ("printer:TM",))
+        self.assertFalse(self.app.cards["scale:1"].canvas.winfo_ismapped())
+        self.app.set_filter("error")
+        self.assertEqual(len(self.app.tree.get_children()), 2)
+
+    def test_copy_details_and_toast(self):
+        self.app.open_details("scale:1")
+        self.app.update()
+        self.app.details.copy()
+        self.assertIn("Balança P05", self.app.clipboard_get())
+        self.assertTrue(self.app.place_slaves())
+
+    def test_buttons_disable_while_busy(self):
+        self.app._set_busy(True)
+        self.assertTrue(self.app.test_all_button.instate(["disabled"]))
+        self.app._set_busy(False)
+        self.assertTrue(self.app.test_all_button.instate(["!disabled"]))
+
+
 class DetailRowsTests(unittest.TestCase):
     def test_rows_skip_empty_values(self):
         rows = dict(ui.detail_rows(DEVICES[0], {"status": "ok", "detail": "x", "hex": "02 03"}))
+        titles = [title for title, _rows in ui.detail_sections(DEVICES[0], None)]
+        self.assertEqual(titles[0], "Identificação")
         self.assertEqual(rows["Estado"], "OK")
         self.assertEqual(rows["Resposta (hex)"], "02 03")
         self.assertNotIn("Firmware", rows)

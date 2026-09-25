@@ -10,31 +10,24 @@ from typing import Any
 
 from .system import resource_path
 
-# Identidades USB exatas de equipamentos conhecidos.
-KNOWN_USB = {
-    "05f9:4005": ("scanner", "Scanner fixo PSC/Datalogic"),
-    "1753:c902": ("pinpad", "Pinpad Gertec PPC930"),
-}
-# Fabricantes cujo VID identifica com segurança o tipo de equipamento no PDV.
-VENDOR_HINTS = {
-    "04b8": "printer",   # Seiko Epson
-    "0b1b": "printer",   # Bematech
-    "0c2e": "scanner",   # Honeywell / Metrologic
-    "05f9": "scanner",   # Datalogic
-    "05e0": "scanner",   # Symbol / Zebra
-    "0b00": "pinpad",    # Ingenico
-}
+# Palavras de tipo (genéricas); a ordem resolve nomes com mais de uma palavra.
 RULES = (
-    ("scale", ("scale", "balanca", "toledo", "filizola", "urano", "prix")),
-    ("pinpad", ("pinpad", "ingenico", "gertecppc", "ppc930", "verifone")),
-    ("biometric", ("biometric", "biometria", "fingerprint", "ud4500", "idbio")),
-    ("printer", ("printer", "impressora", "epson", "bematech", "sweda", "elgin", "thermal", "daruma")),
-    ("scanner", ("scanner", "barcode", "datalogic", "honeywell", "metrologic", "symbol")),
-    ("touchscreen", ("touchscreen", "touchcontroller", "touchpanel", "egalax", "elotouch")),
+    ("cash_drawer", ("cashdrawer", "gaveta")),
+    ("customer_display", ("customerdisplay", "operatordisplay", "poledisplay", "displaycliente")),
+    ("card_reader", ("smartcard", "magneticstripe", "magneticswipe", "leitordecartao", "ccid")),
+    ("scale", ("scale", "balanca")),
+    ("pinpad", ("pinpad",)),
+    ("biometric", ("biometric", "biometria", "biometrico", "fingerprint")),
+    ("printer", ("printer", "impressora", "thermal", "receipt")),
+    ("scanner", ("scanner", "barcode", "leitordecodigo", "imager")),
+    ("touchscreen", ("touchscreen", "touchcontroller", "touchpanel", "touchmonitor", "egalax", "elotouch")),
     ("keyboard", ("keyboard", "teclado")),
 )
-ORDER = {"pinpad": 0, "scanner": 1, "scale": 2, "printer": 3, "keyboard": 4,
-         "biometric": 5, "touchscreen": 6, "monitor": 7}
+SAT_PATTERN = re.compile(r"\bs@t\b|\bsat\b|\bmf-?e\b")
+MIN_BRAND_LENGTH = 4  # palavras curtas demais casariam com nomes aleatórios
+ORDER = {"pinpad": 0, "scanner": 1, "scale": 2, "printer": 3, "sat": 4, "cash_drawer": 5,
+         "keyboard": 6, "biometric": 7, "card_reader": 8, "customer_display": 9, "touchscreen": 10,
+         "monitor": 11}
 
 
 def norm(value: Any) -> str:
@@ -42,13 +35,55 @@ def norm(value: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "", text.lower())
 
 
+@lru_cache(maxsize=1)
+def usb_database() -> dict[str, Any]:
+    try:
+        return json.loads(resource_path("perifericos-br.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"vendors": {}, "products": {}, "brandWords": {}}
+
+
+@lru_cache(maxsize=1)
+def brand_words() -> tuple[tuple[str, str], ...]:
+    """(normalized word, category), longest first so specific models win over brands."""
+    pairs = {(norm(word), category) for category, words in usb_database().get("brandWords", {}).items()
+             for word in words if len(norm(word)) >= MIN_BRAND_LENGTH}
+    return tuple(sorted(pairs, key=lambda pair: (-len(pair[0]), pair[0])))
+
+
 def classify(name: str | None) -> str:
     text = norm(name)
-    return next((category for category, words in RULES if any(word in text for word in words)), "unknown")
+    if not text:
+        return "unknown"
+    if SAT_PATTERN.search(str(name).lower()):
+        return "sat"
+    rule = next((category for category, words in RULES if any(word in text for word in words)), None)
+    if rule:
+        return rule
+    return next((category for word, category in brand_words() if word in text), "unknown")
 
 
-def known_usb(vendor_id: str | None, product_id: str | None) -> tuple[str, str] | None:
-    return KNOWN_USB.get(f"{vendor_id}:{product_id}".lower()) if vendor_id and product_id else None
+def usb_identity(vendor_id: str | None, product_id: str | None) -> dict[str, Any]:
+    """Manufacturer, model, category and adapter flag from the bundled usb.ids subset."""
+    if not vendor_id:
+        return {}
+    database = usb_database()
+    vendor = database["vendors"].get(vendor_id.lower(), {})
+    product = database["products"].get(f"{vendor_id}:{product_id}".lower(), {}) if product_id else {}
+    identity = {"manufacturer": product.get("manufacturer") or vendor.get("manufacturer"),
+                "model": product.get("model"), "name": product.get("name"),
+                "category": product.get("category") or vendor.get("category"),
+                "adapter": bool(product.get("adapter") or vendor.get("adapter"))}
+    return {key: value for key, value in identity.items() if value}
+
+
+def display_name(manufacturer: str | None, model: str | None) -> str:
+    manufacturer, model = (manufacturer or "").strip(), (model or "").strip()
+    if not model:
+        return manufacturer
+    if not manufacturer or norm(model).startswith(norm(manufacturer)[:5]):
+        return model
+    return f"{manufacturer} {model}"
 
 
 def sort_key(device: dict[str, Any]) -> tuple[int, str, str]:

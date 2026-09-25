@@ -13,7 +13,7 @@ Compatível com Ubuntu Desktop 22.04 ou superior em computadores x86-64.
 SHA-256 do executável:
 
 ```text
-48D6639C3FAD25DC7EBC0FF4A4E782A8AFB1F76911EC2740689E7F65E3274723
+9CB6656F74AD9F3543ADF42CF4FD1794B04BBF1EEF70A8FA449E34E059C6A1C5
 ```
 
 ## Relatório para suporte
@@ -25,5 +25,6 @@ SHA-256 do executável:
 ## Desenvolvimento
 
 - Código: pacote `hipauto/` (descoberta, protocolos, testes, interface) e entrada `hipauto_desktop.py`.
-- Testes: `xvfb-run -a python3 -m unittest discover -s tests`.
+- Testes: `xvfb-run -a python3 -m unittest discover -s tests` (com `USB_IDS=caminho/usb.ids` confere a base contra a fonte oficial).
+- Base de periféricos: `python3 tools/gerar_base_perifericos.py caminho/usb.ids` regenera `perifericos-br.json`.
 - Build (Ubuntu 22.04 via Docker): `./build-desktop.sh`, que roda os testes e gera `dist/HIPAUTO-Desktop`.

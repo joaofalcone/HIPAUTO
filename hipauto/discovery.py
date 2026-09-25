@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 import socket
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
@@ -27,6 +28,9 @@ PNP_VENDORS = {"AOC": "AOC", "ACR": "Acer", "AUO": "AU Optronics", "BNQ": "BenQ"
                "LEN": "Lenovo", "LGD": "LG Display", "PHL": "Philips", "SAM": "Samsung",
                "SHP": "Sharp", "VSC": "ViewSonic", "SNY": "Sony"}
 SOURCE_RANK = {"serial": 0, "input": 1, "printer": 2, "usb": 3}
+LAST_ERRORS: list[str] = []  # fontes que falharam na última descoberta
+INPUT_CATEGORIES = {"keyboard", "scanner", "touchscreen", "biometric", "card_reader"}
+USB_CLASS_CATEGORY = {"07": "printer", "0b": "card_reader"}
 
 
 def new_device(**fields: Any) -> dict[str, Any]:
@@ -100,33 +104,39 @@ def stable_ports() -> dict[str, list[str]]:
 
 
 def serial_devices(config: dict[str, Any]) -> list[dict[str, Any]]:
-    result = []
     aliases = config.get("aliases") or {}
     try:
         nodes = [node for node in Path("/dev").iterdir() if TTY_PATTERN.match(node.name)]
     except OSError:
-        return result
-    for node in sorted(nodes, key=lambda item: natural_key(item.name)):
-        if node.name.startswith("ttyS") and not uart_present(node.name):
-            continue
-        props = udev_properties(str(node))
+        return []
+    nodes = [node for node in nodes if not node.name.startswith("ttyS") or uart_present(node.name)]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        props_list = list(pool.map(lambda node: udev_properties(str(node)), nodes))
+    result = []
+    for node, props in sorted(zip(nodes, props_list), key=lambda item: natural_key(item[0].name)):
         vid = (props.get("ID_VENDOR_ID") or "").lower() or None
         pid = (props.get("ID_MODEL_ID") or "").lower() or None
-        known = catalog.known_usb(vid, pid)
-        vendor = props.get("ID_VENDOR_FROM_DATABASE") or props.get("ID_VENDOR", "")
-        model = props.get("ID_MODEL_FROM_DATABASE") or props.get("ID_MODEL", "")
-        label = known[1] if known else " ".join(f"{vendor} {model}".replace("_", " ").split())
-        category = (aliases.get(str(node)) or aliases.get(node.name)
-                    or (known[0] if known else catalog.classify(label)))
-        if category == "unknown" and vid:
-            category = catalog.VENDOR_HINTS.get(vid, "unknown")
+        identity = catalog.usb_identity(vid, pid)
         usb = node.name.startswith(("ttyUSB", "ttyACM"))
+        vendor = identity.get("manufacturer") or (props.get("ID_VENDOR_FROM_DATABASE")
+                                                  or props.get("ID_VENDOR", "")).replace("_", " ")
+        model = identity.get("model") or (props.get("ID_MODEL_FROM_DATABASE")
+                                          or props.get("ID_MODEL", "")).replace("_", " ")
+        adapter = identity.get("adapter", False)
+        if adapter:
+            label = f"Porta USB-serial ({catalog.display_name(vendor, model)})"
+        else:
+            label = identity.get("name") or catalog.display_name(vendor, model)
+        category = (aliases.get(str(node)) or aliases.get(node.name)
+                    or (None if adapter else identity.get("category"))
+                    or ("unknown" if adapter else catalog.classify(label)))
         result.append(new_device(
             id=f"serial:{node.name}", source="serial", category=category,
-            name=label or ("Adaptador serial USB" if usb else f"Porta serial {node.name}"),
+            name=label or ("Adaptador USB-serial" if usb else f"Porta serial {node.name}"),
             connection="USB-Serial" if usb else "Serial RS-232", port=str(node), path=str(node),
             vendor_id=vid, product_id=pid, serial_number=props.get("ID_SERIAL_SHORT"),
-            manufacturer=vendor.replace("_", " ") or None,
+            manufacturer=None if adapter else (vendor or None), model=None if adapter else (model or None),
+            adapter=catalog.display_name(vendor, model) if adapter else None,
             driver=props.get("ID_USB_DRIVER") or driver_name(f"/sys/class/tty/{node.name}/device"),
             usb_node=usb_node(f"/sys/class/tty/{node.name}/device") if usb else None))
     return result
@@ -150,13 +160,13 @@ def input_devices() -> list[dict[str, Any]]:
             continue
         is_usb = bus == "0003"
         vid, pid = (vid, pid) if is_usb else (None, None)
-        known = catalog.known_usb(vid, pid)
-        category = known[0] if known else catalog.classify(name)
-        if category == "unknown" and is_usb:
-            category = catalog.VENDOR_HINTS.get(vid or "", "unknown")
+        identity = catalog.usb_identity(vid, pid)
+        category = catalog.classify(name)
+        if category == "unknown":
+            category = identity.get("category") or "unknown"
         if category == "unknown" and "kbd" in handlers:
             category = "keyboard"
-        if category not in {"keyboard", "scanner", "touchscreen", "biometric"}:
+        if category not in INPUT_CATEGORIES:
             continue
         event = next((item for item in handlers if item.startswith("event")), None)
         connection = {"0011": "PS/2", "0003": "USB", "0005": "Bluetooth"}.get(bus, "Interno")
@@ -165,7 +175,8 @@ def input_devices() -> list[dict[str, Any]]:
         sysfs = re.search(r"S: Sysfs=(\S+)", block)
         result.append(new_device(
             id=f"input:{event or index}", source="input", category=category,
-            name=known[1] if known else name, connection=connection,
+            name=identity.get("name") or name, connection=connection,
+            manufacturer=identity.get("manufacturer"), model=identity.get("model"),
             path=f"/dev/input/{event}" if event else None, vendor_id=vid, product_id=pid,
             driver="i8042" if connection == "PS/2" else ("usbhid" if is_usb else None),
             usb_node=usb_node(f"/sys{sysfs.group(1)}") if is_usb and sysfs else None,
@@ -174,11 +185,22 @@ def input_devices() -> list[dict[str, Any]]:
 
 
 # ------------------------------------------------------------------ barramento USB
+def parse_ieee1284(text: str) -> dict[str, str]:
+    """Printer self-identification, e.g. 'MFG:EPSON;CMD:ESC/POS;MDL:TM-T20;'."""
+    fields = {}
+    for part in text.split(";"):
+        key, _, value = part.partition(":")
+        if value.strip():
+            fields[key.strip().upper()] = value.strip()
+    return {"manufacturer": fields.get("MFG") or fields.get("MANUFACTURER"),
+            "model": fields.get("MDL") or fields.get("MODEL"),
+            "commands": fields.get("CMD") or fields.get("COMMAND SET")}
+
+
 def usb_devices() -> list[dict[str, Any]]:
     result = []
-    root = Path("/sys/bus/usb/devices")
     try:
-        entries = sorted(root.iterdir())
+        entries = sorted(Path("/sys/bus/usb/devices").iterdir(), key=lambda item: item.name)
     except OSError:
         return result
     for path in entries:
@@ -187,21 +209,28 @@ def usb_devices() -> list[dict[str, Any]]:
         vid, pid = read(path / "idVendor").lower(), read(path / "idProduct").lower()
         if not vid or not pid or vid == "1d6b" or read(path / "bDeviceClass") == "09":
             continue
-        manufacturer, product = read(path / "manufacturer"), read(path / "product")
-        name = " ".join(value for value in (manufacturer, product) if value) or f"Dispositivo USB {vid}:{pid}"
         interfaces = sorted(path.glob(f"{path.name}:*"))
         classes = {read(item / "bInterfaceClass") for item in interfaces}
         drivers = [name for item in interfaces if (name := driver_name(item))]
-        known = catalog.known_usb(vid, pid)
-        category = (known[0] if known else catalog.VENDOR_HINTS.get(vid)
-                    or ("printer" if "07" in classes else catalog.classify(name)))
-        if category == "unknown":
+        ieee = next((parse_ieee1284(text) for item in interfaces
+                     if (text := read(item / "ieee1284_id"))), {})
+        identity = catalog.usb_identity(vid, pid)
+        descriptor_maker, product = read(path / "manufacturer"), read(path / "product")
+        manufacturer = ieee.get("manufacturer") or identity.get("manufacturer") or descriptor_maker
+        model = ieee.get("model") or product or identity.get("model")
+        name = identity.get("name") or catalog.display_name(manufacturer, model) or f"Dispositivo USB {vid}:{pid}"
+        category = (identity.get("category") or next((USB_CLASS_CATEGORY[c] for c in sorted(classes)
+                                                      if c in USB_CLASS_CATEGORY), None)
+                    or catalog.classify(f"{descriptor_maker} {product}"))
+        if identity.get("adapter") or category == "unknown":
             continue
+        evidence = [f"IEEE 1284: {ieee['manufacturer']} {ieee['model']}"] if ieee.get("model") else []
         result.append(new_device(
-            id=f"usb:{path.name}", source="usb", category=category, name=known[1] if known else name,
-            connection="USB", path=str(path), vendor_id=vid, product_id=pid,
-            serial_number=read(path / "serial") or None, manufacturer=manufacturer or None, product=product,
-            driver=drivers[0] if drivers else None, usb_node=path.name,
+            id=f"usb:{path.name}", source="usb", category=category, name=name, connection="USB",
+            path=str(path), vendor_id=vid, product_id=pid, serial_number=read(path / "serial") or None,
+            manufacturer=manufacturer or None, model=model or None, product=product,
+            commands=ieee.get("commands"), usb_speed=read(path / "speed") or None,
+            driver=drivers[0] if drivers else None, usb_node=path.name, evidence=evidence,
             detail="Detectado diretamente no barramento USB"))
     return result
 
@@ -246,9 +275,14 @@ def cups_queues() -> list[dict[str, Any]]:
                             path=queue, queue=queue, printer_uri=uri, detail=f"Fila CUPS: {state.strip()}")
         if "disabled" in state.lower():
             device.update(status="warning", detail="Fila CUPS desabilitada")
-        if device["connection"] == "Rede" and uri and not network_reachable(uri):
-            device.update(status="error", detail="Impressora de rede não responde no endereço configurado")
         result.append(device)
+    network = [d for d in result if d["connection"] == "Rede" and d["printer_uri"]]
+    if network:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            online = list(pool.map(lambda d: network_reachable(d["printer_uri"]), network))
+        for device, ok in zip(network, online):
+            if not ok:
+                device.update(status="error", detail="Impressora de rede não responde no endereço configurado")
     return result
 
 
@@ -290,6 +324,9 @@ def parse_edid(data: bytes) -> dict[str, Any]:
     pnp = "".join(chr(((code >> shift) & 0x1F) + 64) for shift in (10, 5, 0))
     info: dict[str, Any] = {"pnp": pnp, "manufacturer": PNP_VENDORS.get(pnp, pnp),
                             "product_code": f"{data[10] | (data[11] << 8):04x}"}
+    width_cm, height_cm = data[21], data[22]
+    if width_cm and height_cm:
+        info["diagonal"] = round((width_cm ** 2 + height_cm ** 2) ** 0.5 / 2.54, 1)
     number = int.from_bytes(data[12:16], "little")
     if number:
         info["serial"] = str(number)
@@ -319,13 +356,17 @@ def monitors() -> list[dict[str, Any]]:
     result = []
     for index, (connector, status) in enumerate(sorted(connectors), 1):
         edid = parse_edid(read_bytes(status.parent / "edid"))
-        model = " ".join(v for v in (edid.get("manufacturer"), edid.get("model")) if v)
+        modes = read(status.parent / "modes").splitlines()
+        model = catalog.display_name(edid.get("manufacturer"), edid.get("model"))
+        details = ", ".join(filter(None, [modes[0] if modes else None,
+                                          f"{edid['diagonal']}\"" if edid.get("diagonal") else None]))
         result.append(new_device(
             id=f"monitor:{connector}", source="drm", category="monitor",
             name=model or f"Monitor {index}", connection=monitor_connection(connector),
             path=str(status), port_name=connector, manufacturer=edid.get("manufacturer"),
-            serial_number=edid.get("serial"), driver="drm", edid=edid or None,
-            detail=f"Monitor conectado na saída {connector}"))
+            model=edid.get("model"), serial_number=edid.get("serial"), driver="drm", edid=edid or None,
+            resolution=modes[0] if modes else None, diagonal=edid.get("diagonal"),
+            detail=f"Monitor conectado na saída {connector}" + (f" ({details})" if details else "")))
     return result
 
 
@@ -345,7 +386,10 @@ def merge_interfaces(devices: list[dict[str, Any]]) -> list[dict[str, Any]]:
     result = []
     for device in sorted(devices, key=lambda d: SOURCE_RANK.get(d.get("source"), 9)):
         keys = identity_keys(device)
-        owner = next((owners[key] for key in keys if key in owners), None)
+        # Com nó físico conhecido só o nó decide: aparelhos idênticos em portas
+        # diferentes (mesmo VID/PID, sem número de série) continuam separados.
+        lookup = keys[:1] if device.get("usb_node") else keys
+        owner = next((owners[key] for key in lookup if key in owners), None)
         if owner is None:
             result.append(device)
             owner = device
@@ -396,19 +440,17 @@ def enrich(device: dict[str, Any], ports: dict[str, list[str]], config: dict[str
                                   "stop_bits": settings.get("stopbits"), "parity": settings.get("parity")}
 
 
-def identify_scales(devices: list[dict[str, Any]]) -> None:
-    for device in devices:
-        port = device.get("port")
-        if not port or device.get("category") not in {"unknown", "scale"}:
-            continue
-        if port_in_use(port):
-            device["evidence"].append("Sondagem P05 ignorada: porta em uso por outro programa")
-            continue
-        probe = protocols.probe_p05(port)
-        if not probe.get("matched"):
-            if probe.get("error") == "permission-denied":
-                device["evidence"].append("Sondagem P05 sem permissão na porta (grupo dialout)")
-            continue
+def probe_serial_port(device: dict[str, Any]) -> None:
+    """Identify what is attached to an unknown serial port (scale P05, ESC/POS printer)."""
+    port = device["port"]
+    if port_in_use(port):
+        device["evidence"].append("Sondagem ignorada: porta em uso por outro programa")
+        return
+    probe = protocols.probe_p05(port)
+    if probe.get("error") == "permission-denied":
+        device["evidence"].append("Sondagem sem permissão na porta (grupo dialout)")
+        return
+    if probe.get("matched"):
         decoded = probe["decoded"]
         state = f"peso atual {decoded['weight']}" if decoded["kind"] == "weight" else decoded["state"]
         device.update({
@@ -421,6 +463,26 @@ def identify_scales(devices: list[dict[str, Any]]) -> None:
             "port_details": dict(protocols.P05_SETTINGS),
         })
         device["evidence"].append(f"P05: ENQ 05h -> {probe['hex']} em 9600 8N1")
+        return
+    if device.get("category") != "unknown":
+        return
+    printer = protocols.probe_escpos(port)
+    if printer.get("matched"):
+        device.update({
+            "category": "printer", "name": "Impressora serial ESC/POS", "printer_protocol": "ESC/POS",
+            "detail": f"Impressora confirmada pelo status em tempo real ESC/POS a {printer['baudrate']} bps",
+            "confidence": {"level": "high", "label": "Alta para tipo/protocolo",
+                           "reason": "DLE EOT 1 retornou byte de status ESC/POS válido"},
+            "port_details": {"baudrate": printer["baudrate"], "data_bits": 8, "stop_bits": 1, "parity": "N"},
+        })
+        device["evidence"].append(f"ESC/POS: DLE EOT 1 -> {printer['hex']} a {printer['baudrate']} bps")
+
+
+def identify_serial(devices: list[dict[str, Any]]) -> None:
+    targets = [d for d in devices if d.get("port") and d.get("category") in {"unknown", "scale"}]
+    if targets:
+        with ThreadPoolExecutor(max_workers=min(8, len(targets))) as pool:
+            list(pool.map(probe_serial_port, targets))
 
 
 def identify_smak(devices: list[dict[str, Any]]) -> None:
@@ -443,19 +505,42 @@ def identify_smak(devices: list[dict[str, Any]]) -> None:
         device["evidence"].append(f"Sonda oficial SMAK: interface PS/2, status 0, firmware {firmware}")
 
 
+def safe(source: Any, errors: list[str], *args: Any) -> list[dict[str, Any]]:
+    """Run one discovery source; a broken source never hides the others."""
+    try:
+        return source(*args)
+    except Exception as exc:  # isolamento por fonte
+        errors.append(f"{getattr(source, '__name__', 'fonte')}: {type(exc).__name__}: {exc}")
+        return []
+
+
 def discover() -> list[dict[str, Any]]:
     config = load_config()
-    found = serial_devices(config) + input_devices() + usb_devices()
-    devices = attach_usb_printers(merge_interfaces(found) + cups_queues()) + monitors()
-    ports = stable_ports()
+    errors: list[str] = []
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        jobs = {name: pool.submit(safe, source, errors, *args) for name, source, args in (
+            ("serial", serial_devices, (config,)), ("input", input_devices, ()), ("usb", usb_devices, ()),
+            ("cups", cups_queues, ()), ("monitors", monitors, ()), ("ports", stable_ports_list, ()))}
+        results = {name: job.result() for name, job in jobs.items()}
+    found = results["serial"] + results["input"] + results["usb"]
+    devices = attach_usb_printers(merge_interfaces(found) + results["cups"]) + results["monitors"]
+    ports = dict(results["ports"])
     for device in devices:
         enrich(device, ports, config)
-    identify_scales(devices)
-    identify_smak(devices)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        serial_job = pool.submit(safe, identify_serial, errors, devices)
+        smak_job = pool.submit(safe, identify_smak, errors, devices)
+        serial_job.result()
+        smak_job.result()
     for device in devices:
         device["confidence"] = device.get("confidence") or confidence(device)
         device["homologation"] = device.get("homologation") or catalog.homologation(
-            device["category"], f"{device.get('manufacturer') or ''} {device['name']}",
+            device["category"], f"{device.get('manufacturer') or ''} {device['name']} {device.get('model') or ''}",
             device.get("vendor_id"), device.get("product_id"))
     devices.sort(key=catalog.sort_key)
+    LAST_ERRORS[:] = errors
     return devices
+
+
+def stable_ports_list() -> list[tuple[str, list[str]]]:
+    return list(stable_ports().items())

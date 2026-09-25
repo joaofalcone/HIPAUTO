@@ -1,0 +1,3872 @@
+{
+ "source": "usb.ids (http://www.linux-usb.org/usb.ids)",
+ "usbIdsVersion": "2026.06.26",
+ "vendors": {
+  "03f4": {
+   "manufacturer": "Diebold",
+   "official": "Diebold, Inc.",
+   "category": null
+  },
+  "0403": {
+   "manufacturer": "FTDI",
+   "official": "Future Technology Devices International, Ltd",
+   "category": null,
+   "adapter": true
+  },
+  "0404": {
+   "manufacturer": "NCR",
+   "official": "NCR Corp.",
+   "category": null
+  },
+  "04b8": {
+   "manufacturer": "Epson",
+   "official": "Seiko Epson Corp.",
+   "category": "printer"
+  },
+  "04e6": {
+   "manufacturer": "SCM Microsystems",
+   "official": "SCM Microsystems, Inc.",
+   "category": "card_reader"
+  },
+  "04e7": {
+   "manufacturer": "Elo Touch",
+   "official": "Elo TouchSystems",
+   "category": "touchscreen"
+  },
+  "0519": {
+   "manufacturer": "Star Micronics",
+   "official": "Star Micronics Co., Ltd",
+   "category": "printer"
+  },
+  "0536": {
+   "manufacturer": "Honeywell (Hand Held)",
+   "official": "Hand Held Products (Welch Allyn, Inc.)",
+   "category": "scanner"
+  },
+  "053a": {
+   "manufacturer": "Preh KeyTec",
+   "official": "PrehKeyTec GmbH",
+   "category": "keyboard"
+  },
+  "05ba": {
+   "manufacturer": "DigitalPersona",
+   "official": "DigitalPersona, Inc.",
+   "category": "biometric"
+  },
+  "05e0": {
+   "manufacturer": "Zebra (Symbol)",
+   "official": "Symbol Technologies",
+   "category": "scanner"
+  },
+  "05f9": {
+   "manufacturer": "Datalogic",
+   "official": "PSC Scanning, Inc.",
+   "category": "scanner"
+  },
+  "067b": {
+   "manufacturer": "Prolific",
+   "official": "Prolific Technology, Inc.",
+   "category": null,
+   "adapter": true
+  },
+  "067e": {
+   "manufacturer": "Intermec",
+   "official": "Intermec Technologies Corp.",
+   "category": null
+  },
+  "072f": {
+   "manufacturer": "ACS",
+   "official": "Advanced Card Systems, Ltd",
+   "category": "card_reader"
+  },
+  "076b": {
+   "manufacturer": "HID OmniKey",
+   "official": "OmniKey AG",
+   "category": "card_reader"
+  },
+  "080c": {
+   "manufacturer": "Datalogic",
+   "official": "Datalogic S.p.A.",
+   "category": "scanner"
+  },
+  "0828": {
+   "manufacturer": "Sato",
+   "official": "Sato Corp.",
+   "category": "printer"
+  },
+  "08a6": {
+   "manufacturer": "Toshiba TEC",
+   "official": "Toshiba TEC",
+   "category": "printer"
+  },
+  "08e6": {
+   "manufacturer": "Gemalto",
+   "official": "Gemalto (was Gemplus)",
+   "category": "card_reader"
+  },
+  "096e": {
+   "manufacturer": "Feitian",
+   "official": "Feitian Technologies, Inc.",
+   "category": "card_reader"
+  },
+  "0a5f": {
+   "manufacturer": "Zebra",
+   "official": "Zebra Technologies",
+   "category": "printer"
+  },
+  "0a86": {
+   "manufacturer": "Nitgen",
+   "official": "NITGen Co., Ltd",
+   "category": "biometric"
+  },
+  "0aa7": {
+   "manufacturer": "Wincor Nixdorf",
+   "official": "Wincor Nixdorf International GmbH",
+   "category": null
+  },
+  "0b00": {
+   "manufacturer": "Ingenico",
+   "official": "INGENICO",
+   "category": "pinpad"
+  },
+  "0b0b": {
+   "manufacturer": "Datamax-O'Neil",
+   "official": "Datamax-O'Neil",
+   "category": "printer"
+  },
+  "0c2e": {
+   "manufacturer": "Honeywell (Metrologic)",
+   "official": "Metrologic Instruments",
+   "category": "scanner"
+  },
+  "0d3a": {
+   "manufacturer": "Posiflex",
+   "official": "Posiflex Technologies, Inc.",
+   "category": null
+  },
+  "0dd4": {
+   "manufacturer": "Custom",
+   "official": "Custom Engineering SPA",
+   "category": "printer"
+  },
+  "0eb8": {
+   "manufacturer": "Mettler Toledo",
+   "official": "Mettler Toledo",
+   "category": "scale"
+  },
+  "0eef": {
+   "manufacturer": "eGalax",
+   "official": "D-WAV Scientific Co., Ltd",
+   "category": "touchscreen"
+  },
+  "0f14": {
+   "manufacturer": "Ingenico",
+   "official": "Ingenico",
+   "category": "card_reader"
+  },
+  "0fa8": {
+   "manufacturer": "Logic Controls",
+   "official": "Logic Controls, Inc.",
+   "category": null
+  },
+  "10c4": {
+   "manufacturer": "Silicon Labs",
+   "official": "Silicon Labs",
+   "category": null,
+   "adapter": true
+  },
+  "113f": {
+   "manufacturer": "Integrated Biometrics",
+   "official": "Integrated Biometrics, LLC",
+   "category": "biometric"
+  },
+  "1162": {
+   "manufacturer": "SecuGen",
+   "official": "Secugen Corp.",
+   "category": "biometric"
+  },
+  "11ca": {
+   "manufacturer": "Verifone",
+   "official": "VeriFone Inc",
+   "category": "pinpad"
+  },
+  "1203": {
+   "manufacturer": "TSC",
+   "official": "TSC Auto ID Technology Co., Ltd",
+   "category": "printer"
+  },
+  "1343": {
+   "manufacturer": "Citizen",
+   "official": "Citizen Systems",
+   "category": "printer"
+  },
+  "147e": {
+   "manufacturer": "UPEK",
+   "official": "Upek",
+   "category": "biometric"
+  },
+  "1491": {
+   "manufacturer": "Futronic",
+   "official": "Futronic Technology Co. Ltd.",
+   "category": "biometric"
+  },
+  "1504": {
+   "manufacturer": "Bixolon",
+   "official": "Bixolon CO LTD",
+   "category": "printer"
+  },
+  "154f": {
+   "manufacturer": "SNBC",
+   "official": "SNBC CO., Ltd",
+   "category": "printer"
+  },
+  "16d1": {
+   "manufacturer": "Suprema",
+   "official": "Suprema Inc.",
+   "category": "biometric"
+  },
+  "1753": {
+   "manufacturer": "Gertec",
+   "official": "GERTEC Telecomunicacoes Ltda.",
+   "category": null
+  },
+  "1a86": {
+   "manufacturer": "QinHeng (WCH)",
+   "official": "QinHeng Electronics",
+   "category": null,
+   "adapter": true
+  },
+  "1d90": {
+   "manufacturer": "Citizen",
+   "official": "Citizen",
+   "category": "printer"
+  },
+  "1eab": {
+   "manufacturer": "Newland",
+   "official": "Fujian Newland Computer Co., Ltd",
+   "category": "scanner"
+  },
+  "2730": {
+   "manufacturer": "Citizen",
+   "official": "Citizen",
+   "category": "printer"
+  },
+  "2fe7": {
+   "manufacturer": "Elgin",
+   "official": "ELGIN S.A.",
+   "category": null
+  },
+  "3036": {
+   "manufacturer": "Control iD",
+   "official": "Control iD",
+   "category": null
+  },
+  "3219": {
+   "manufacturer": "SMAK",
+   "official": "Smak Tecnologia e Automacao LTDA",
+   "category": "keyboard"
+  }
+ },
+ "products": {
+  "0403:0000": {
+   "model": "H4SMK 7 Port Hub / Bricked Counterfeit FT232 Serial (UART) IC",
+   "adapter": true
+  },
+  "0403:0232": {
+   "model": "Serial Converter",
+   "adapter": true
+  },
+  "0403:1060": {
+   "model": "JTAG adapter",
+   "adapter": true
+  },
+  "0403:1234": {
+   "model": "IronLogic RFID Adapter [Z-2 USB]",
+   "adapter": true
+  },
+  "0403:1235": {
+   "model": "Iron Logic Z-397 RS-485/422 converter",
+   "adapter": true
+  },
+  "0403:6001": {
+   "model": "FT232 Serial (UART) IC",
+   "adapter": true
+  },
+  "0403:6002": {
+   "model": "Lumel PD12",
+   "adapter": true
+  },
+  "0403:6007": {
+   "model": "Serial Converter",
+   "adapter": true
+  },
+  "0403:6008": {
+   "model": "Serial Converter",
+   "adapter": true
+  },
+  "0403:6009": {
+   "model": "Serial Converter",
+   "adapter": true
+  },
+  "0403:6010": {
+   "model": "FT2232C/D/H Dual UART/FIFO IC",
+   "adapter": true
+  },
+  "0403:6011": {
+   "model": "FT4232H Quad HS USB-UART/FIFO IC",
+   "adapter": true
+  },
+  "0403:6014": {
+   "model": "FT232H Single HS USB-UART/FIFO IC",
+   "adapter": true
+  },
+  "0403:6015": {
+   "model": "Bridge(I2C/SPI/UART/FIFO)",
+   "adapter": true
+  },
+  "0403:601e": {
+   "model": "FT600 16-bit FIFO IC",
+   "adapter": true
+  },
+  "0403:601f": {
+   "model": "FT601 32-bit FIFO IC",
+   "adapter": true
+  },
+  "0403:6ee0": {
+   "model": "EZO Carrier Board",
+   "adapter": true
+  },
+  "0403:6f70": {
+   "model": "HB-RF-USB",
+   "adapter": true
+  },
+  "0403:7150": {
+   "model": "FT2232x wired for MPSSE+UART",
+   "adapter": true
+  },
+  "0403:7151": {
+   "model": "FT2232x wired for MPSSE+UART",
+   "adapter": true
+  },
+  "0403:7152": {
+   "model": "FreeCalypso dual UART with boot control",
+   "adapter": true
+  },
+  "0403:7be8": {
+   "model": "FT232R",
+   "adapter": true
+  },
+  "0403:8028": {
+   "model": "Dev board JTAG (FT232H based)",
+   "adapter": true
+  },
+  "0403:8040": {
+   "model": "4 Port Hub",
+   "adapter": true
+  },
+  "0403:8070": {
+   "model": "7 Port Hub",
+   "adapter": true
+  },
+  "0403:8140": {
+   "model": "Vehicle Explorer Interface",
+   "adapter": true
+  },
+  "0403:8210": {
+   "model": "MGTimer - MGCC (Vic) Timing System",
+   "adapter": true
+  },
+  "0403:8348": {
+   "model": "FT232BM [SIENNA Serial Interface]",
+   "adapter": true
+  },
+  "0403:8370": {
+   "model": "7 Port Hub",
+   "adapter": true
+  },
+  "0403:8371": {
+   "model": "PS/2 Keyboard And Mouse",
+   "adapter": true
+  },
+  "0403:8372": {
+   "model": "FT8U100AX Serial Port",
+   "adapter": true
+  },
+  "0403:8508": {
+   "model": "Selectronic SP PRO",
+   "adapter": true
+  },
+  "0403:87d0": {
+   "model": "Cressi Dive Computer Interface",
+   "adapter": true
+  },
+  "0403:8a28": {
+   "model": "Rainforest Automation ZigBee Controller",
+   "adapter": true
+  },
+  "0403:8a98": {
+   "model": "TIAO Multi-Protocol Adapter",
+   "adapter": true
+  },
+  "0403:8b28": {
+   "model": "Alpermann+Velte TCI70",
+   "adapter": true
+  },
+  "0403:8b29": {
+   "model": "Alpermann+Velte TC60 CLS",
+   "adapter": true
+  },
+  "0403:8b2a": {
+   "model": "Alpermann+Velte Rubidium Q1",
+   "adapter": true
+  },
+  "0403:8b2b": {
+   "model": "Alpermann+Velte TCD",
+   "adapter": true
+  },
+  "0403:8b2c": {
+   "model": "Alpermann+Velte TCC70",
+   "adapter": true
+  },
+  "0403:9090": {
+   "model": "SNAP Stick 200",
+   "adapter": true
+  },
+  "0403:9132": {
+   "model": "LCD and Temperature Interface",
+   "adapter": true
+  },
+  "0403:9133": {
+   "model": "CallerID",
+   "adapter": true
+  },
+  "0403:9134": {
+   "model": "Virtual keyboard",
+   "adapter": true
+  },
+  "0403:9135": {
+   "model": "Rotary Pub alarm",
+   "adapter": true
+  },
+  "0403:9136": {
+   "model": "Pulsecounter",
+   "adapter": true
+  },
+  "0403:9137": {
+   "model": "Ledbutton interface",
+   "adapter": true
+  },
+  "0403:9e90": {
+   "model": "Marvell OpenRD Base/Client",
+   "adapter": true
+  },
+  "0403:9f08": {
+   "model": "CIB-1894 Conclusion SmartLink Box:",
+   "adapter": true
+  },
+  "0403:9f80": {
+   "model": "Ewert Energy Systems CANdapter",
+   "adapter": true
+  },
+  "0403:a6d0": {
+   "model": "Texas Instruments XDS100v2 JTAG / BeagleBone A3",
+   "adapter": true
+  },
+  "0403:a951": {
+   "model": "HCP HIT GSM/GPRS modem [Cinterion MC55i]",
+   "adapter": true
+  },
+  "0403:a9a0": {
+   "model": "FT2232D - Dual UART/FIFO IC - FTDI",
+   "adapter": true
+  },
+  "0403:abb8": {
+   "model": "Lego Mindstorms NXTCam",
+   "adapter": true
+  },
+  "0403:b0c0": {
+   "model": "microSensys RFID device",
+   "adapter": true
+  },
+  "0403:b0c1": {
+   "model": "microSensys RFID device",
+   "adapter": true
+  },
+  "0403:b0c2": {
+   "model": "iID contactless RFID device",
+   "adapter": true
+  },
+  "0403:b0c3": {
+   "model": "iID contactless RFID device",
+   "adapter": true
+  },
+  "0403:b0c4": {
+   "model": "RFID device",
+   "adapter": true
+  },
+  "0403:b0c5": {
+   "model": "RFID device",
+   "adapter": true
+  },
+  "0403:b810": {
+   "model": "US Interface Navigator (CAT and 2nd PTT lines)",
+   "adapter": true
+  },
+  "0403:b811": {
+   "model": "US Interface Navigator (WKEY and FSK lines)",
+   "adapter": true
+  },
+  "0403:b812": {
+   "model": "US Interface Navigator (RS232 and CONFIG lines)",
+   "adapter": true
+  },
+  "0403:b9b0": {
+   "model": "Fujitsu SK-16FX-100PMC V1.1",
+   "adapter": true
+  },
+  "0403:baf8": {
+   "model": "Amontec JTAGkey",
+   "adapter": true
+  },
+  "0403:bcd8": {
+   "model": "Stellaris Development Board",
+   "adapter": true
+  },
+  "0403:bcd9": {
+   "model": "Stellaris Evaluation Board",
+   "adapter": true
+  },
+  "0403:bcda": {
+   "model": "Stellaris ICDI Board",
+   "adapter": true
+  },
+  "0403:bd90": {
+   "model": "PICAXE Download Cable [AXE027]",
+   "adapter": true
+  },
+  "0403:bdc8": {
+   "model": "Egnite GmbH - JTAG/RS-232 adapter",
+   "adapter": true
+  },
+  "0403:bfd8": {
+   "model": "OpenDCC",
+   "adapter": true
+  },
+  "0403:bfd9": {
+   "model": "OpenDCC (Sniffer)",
+   "adapter": true
+  },
+  "0403:bfda": {
+   "model": "OpenDCC (Throttle)",
+   "adapter": true
+  },
+  "0403:bfdb": {
+   "model": "OpenDCC (Gateway)",
+   "adapter": true
+  },
+  "0403:bfdc": {
+   "model": "OpenDCC (GBM)",
+   "adapter": true
+  },
+  "0403:c580": {
+   "model": "HID UNIKEY dongle [F-Response]",
+   "adapter": true
+  },
+  "0403:c630": {
+   "model": "lcd2usb interface",
+   "adapter": true
+  },
+  "0403:c631": {
+   "model": "i2c-tiny-usb interface",
+   "adapter": true
+  },
+  "0403:c632": {
+   "model": "xu1541 c64 floppy drive interface",
+   "adapter": true
+  },
+  "0403:c633": {
+   "model": "TinyCrypt dongle",
+   "adapter": true
+  },
+  "0403:c634": {
+   "model": "glcd2usb interface",
+   "adapter": true
+  },
+  "0403:c7d0": {
+   "model": "RR-CirKits LocoBuffer-USB",
+   "adapter": true
+  },
+  "0403:c8b8": {
+   "model": "Alpermann+Velte MTD TCU",
+   "adapter": true
+  },
+  "0403:c8b9": {
+   "model": "Alpermann+Velte MTD TCU 1HE",
+   "adapter": true
+  },
+  "0403:c8ba": {
+   "model": "Alpermann+Velte Rubidium H1",
+   "adapter": true
+  },
+  "0403:c8bb": {
+   "model": "Alpermann+Velte Rubidium H3",
+   "adapter": true
+  },
+  "0403:c8bc": {
+   "model": "Alpermann+Velte Rubidium S1",
+   "adapter": true
+  },
+  "0403:c8bd": {
+   "model": "Alpermann+Velte Rubidium T1",
+   "adapter": true
+  },
+  "0403:c8be": {
+   "model": "Alpermann+Velte Rubidium D1",
+   "adapter": true
+  },
+  "0403:c8bf": {
+   "model": "Alpermann+Velte TC60 RLV",
+   "adapter": true
+  },
+  "0403:cc48": {
+   "model": "Tactrix OpenPort 1.3 Mitsubishi",
+   "adapter": true
+  },
+  "0403:cc49": {
+   "model": "Tactrix OpenPort 1.3 Subaru",
+   "adapter": true
+  },
+  "0403:cc4a": {
+   "model": "Tactrix OpenPort 1.3 Universal",
+   "adapter": true
+  },
+  "0403:cff8": {
+   "model": "Amontec JTAGkey",
+   "adapter": true
+  },
+  "0403:d010": {
+   "model": "SCS PTC-IIusb",
+   "adapter": true
+  },
+  "0403:d011": {
+   "model": "SCS Position-Tracker/TNC",
+   "adapter": true
+  },
+  "0403:d012": {
+   "model": "SCS DRAGON 1",
+   "adapter": true
+  },
+  "0403:d013": {
+   "model": "SCS DRAGON 1",
+   "adapter": true
+  },
+  "0403:d388": {
+   "model": "Xsens converter",
+   "adapter": true
+  },
+  "0403:d389": {
+   "model": "Xsens Wireless Receiver",
+   "adapter": true
+  },
+  "0403:d38a": {
+   "model": "Xsens serial converter",
+   "adapter": true
+  },
+  "0403:d38b": {
+   "model": "Xsens serial converter",
+   "adapter": true
+  },
+  "0403:d38c": {
+   "model": "Xsens Wireless Receiver",
+   "adapter": true
+  },
+  "0403:d38d": {
+   "model": "Xsens Awinda Station",
+   "adapter": true
+  },
+  "0403:d38e": {
+   "model": "Xsens serial converter",
+   "adapter": true
+  },
+  "0403:d38f": {
+   "model": "Xsens serial converter",
+   "adapter": true
+  },
+  "0403:d491": {
+   "model": "Zolix Omni 1509 monochromator",
+   "adapter": true
+  },
+  "0403:d578": {
+   "model": "Accesio USB-COM-4SM",
+   "adapter": true
+  },
+  "0403:d678": {
+   "model": "GammaScout",
+   "adapter": true
+  },
+  "0403:d6f8": {
+   "model": "UNI Black BOX",
+   "adapter": true
+  },
+  "0403:d738": {
+   "model": "Propox JTAGcable II",
+   "adapter": true
+  },
+  "0403:d739": {
+   "model": "Propox ISPcable III",
+   "adapter": true
+  },
+  "0403:d9a9": {
+   "model": "Actisense USG-1 NMEA Serial Gateway",
+   "adapter": true
+  },
+  "0403:d9aa": {
+   "model": "Actisense NGT-1 NMEA2000 PC Interface",
+   "adapter": true
+  },
+  "0403:d9ab": {
+   "model": "Actisense NGT-1 NMEA2000 Gateway",
+   "adapter": true
+  },
+  "0403:daf4": {
+   "model": "Qundis Serial Infrared Head",
+   "adapter": true
+  },
+  "0403:e0d0": {
+   "model": "Total Phase Aardvark I2C/SPI Host Adapter",
+   "adapter": true
+  },
+  "0403:e518": {
+   "model": "IBR IMB-usb",
+   "adapter": true
+  },
+  "0403:e521": {
+   "model": "EVER Sinline XL Series UPS",
+   "adapter": true
+  },
+  "0403:e6c8": {
+   "model": "PYRAMID Computer GmbH LCD",
+   "adapter": true
+  },
+  "0403:e700": {
+   "model": "Elster Unicom III Optical Probe",
+   "adapter": true
+  },
+  "0403:e729": {
+   "model": "Segway Robotic Mobility Platforms 200",
+   "adapter": true
+  },
+  "0403:e888": {
+   "model": "Expert ISDN Control USB",
+   "adapter": true
+  },
+  "0403:e889": {
+   "model": "USB-RS232 OptoBridge",
+   "adapter": true
+  },
+  "0403:e88a": {
+   "model": "Expert mouseCLOCK USB II",
+   "adapter": true
+  },
+  "0403:e88b": {
+   "model": "Precision Clock MSF USB",
+   "adapter": true
+  },
+  "0403:e88c": {
+   "model": "Expert mouseCLOCK USB II HBG",
+   "adapter": true
+  },
+  "0403:e8d8": {
+   "model": "Aaronia AG Spectran Spectrum Analyzer",
+   "adapter": true
+  },
+  "0403:e8dc": {
+   "model": "Aaronia AG UBBV Preamplifier",
+   "adapter": true
+  },
+  "0403:ea90": {
+   "model": "Eclo 1-Wire Adapter",
+   "adapter": true
+  },
+  "0403:ecd9": {
+   "model": "miControl miCan-Stick",
+   "adapter": true
+  },
+  "0403:ed71": {
+   "model": "HAMEG HO870 Serial Port",
+   "adapter": true
+  },
+  "0403:ed72": {
+   "model": "HAMEG HO720 Serial Port",
+   "adapter": true
+  },
+  "0403:ed73": {
+   "model": "HAMEG HO730 Serial Port",
+   "adapter": true
+  },
+  "0403:ed74": {
+   "model": "HAMEG HO820 Serial Port",
+   "adapter": true
+  },
+  "0403:eea2": {
+   "model": "PCStage Lite 32 channel DMX512 Interface",
+   "adapter": true
+  },
+  "0403:ef10": {
+   "model": "FT1245BL",
+   "adapter": true
+  },
+  "0403:f070": {
+   "model": "Serial Converter 422/485 [Vardaan VEUSB422R3]",
+   "adapter": true
+  },
+  "0403:f0c8": {
+   "model": "SPROG Decoder Programmer",
+   "adapter": true
+  },
+  "0403:f0c9": {
+   "model": "SPROG-DCC CAN-USB",
+   "adapter": true
+  },
+  "0403:f0e9": {
+   "model": "Tagsys L-P101",
+   "adapter": true
+  },
+  "0403:f0ee": {
+   "model": "Tagsys Medio P200x",
+   "adapter": true
+  },
+  "0403:f1a0": {
+   "model": "Asix PRESTO Programmer",
+   "adapter": true
+  },
+  "0403:f208": {
+   "model": "Papenmeier Braille-Display",
+   "adapter": true
+  },
+  "0403:f3c0": {
+   "model": "4N-GALAXY Serial Converter",
+   "adapter": true
+  },
+  "0403:f458": {
+   "model": "ABACUS ELECTRICS Optical Probe",
+   "adapter": true
+  },
+  "0403:f608": {
+   "model": "CTI USB-485-Mini",
+   "adapter": true
+  },
+  "0403:f60b": {
+   "model": "CTI USB-Nano-485",
+   "adapter": true
+  },
+  "0403:f680": {
+   "model": "Suunto Sports Instrument",
+   "adapter": true
+  },
+  "0403:f758": {
+   "model": "GW Instek GDS-8x0 Oscilloscope",
+   "adapter": true
+  },
+  "0403:f7c0": {
+   "model": "ZeitControl Cardsystems TagTracer MIFARE",
+   "adapter": true
+  },
+  "0403:f850": {
+   "model": "USB-UIRT (Universal Infrared Receiver+Transmitter)",
+   "adapter": true
+  },
+  "0403:f918": {
+   "model": "Ant8 Logic Probe",
+   "adapter": true
+  },
+  "0403:f9d9": {
+   "model": "Wetterempfanger 147.3kHz",
+   "adapter": true
+  },
+  "0403:fa00": {
+   "model": "Matrix Orbital USB Serial",
+   "adapter": true
+  },
+  "0403:fa01": {
+   "model": "Matrix Orbital MX2 or MX3",
+   "adapter": true
+  },
+  "0403:fa02": {
+   "model": "Matrix Orbital MX4 or MX5",
+   "adapter": true
+  },
+  "0403:fa03": {
+   "model": "Matrix Orbital VK/LK202 Family",
+   "adapter": true
+  },
+  "0403:fa04": {
+   "model": "Matrix Orbital VK/LK204 Family",
+   "adapter": true
+  },
+  "0403:fa20": {
+   "model": "Ross-Tech HEX-USB",
+   "adapter": true
+  },
+  "0403:fc08": {
+   "model": "Crystalfontz CFA-632 USB LCD",
+   "adapter": true
+  },
+  "0403:fc09": {
+   "model": "Crystalfontz CFA-634 USB LCD",
+   "adapter": true
+  },
+  "0403:fc0b": {
+   "model": "Crystalfontz CFA-633 USB LCD",
+   "adapter": true
+  },
+  "0403:fc0c": {
+   "model": "Crystalfontz CFA-631 USB LCD",
+   "adapter": true
+  },
+  "0403:fc0d": {
+   "model": "Crystalfontz CFA-635 USB LCD",
+   "adapter": true
+  },
+  "0403:fc0e": {
+   "model": "Crystalfontz CFA-533",
+   "adapter": true
+  },
+  "0403:fc82": {
+   "model": "SEMC DSS-20/DSS-25 SyncStation",
+   "adapter": true
+  },
+  "0403:fd48": {
+   "model": "ShipModul MiniPlex-4xUSB NMEA Multiplexer",
+   "adapter": true
+  },
+  "0403:fd49": {
+   "model": "ShipModul MiniPlex-4xUSB-AIS NMEA Multiplexer",
+   "adapter": true
+  },
+  "0403:fd4b": {
+   "model": "ShipModul MiniPlex NMEA Multiplexer",
+   "adapter": true
+  },
+  "0403:ff08": {
+   "model": "ToolHouse LoopBack Adapter",
+   "adapter": true
+  },
+  "0403:ff18": {
+   "model": "ScienceScope Logbook ML",
+   "adapter": true
+  },
+  "0403:ff19": {
+   "model": "Logbook Bus",
+   "adapter": true
+  },
+  "0403:ff1a": {
+   "model": "Logbook Bus",
+   "adapter": true
+  },
+  "0403:ff1b": {
+   "model": "Logbook Bus",
+   "adapter": true
+  },
+  "0403:ff1c": {
+   "model": "ScienceScope Logbook LS",
+   "adapter": true
+  },
+  "0403:ff1d": {
+   "model": "ScienceScope Logbook HS",
+   "adapter": true
+  },
+  "0403:ff1e": {
+   "model": "Logbook Bus",
+   "adapter": true
+  },
+  "0403:ff1f": {
+   "model": "Logbook Bus",
+   "adapter": true
+  },
+  "0404:0202": {
+   "model": "78XX Scanner",
+   "category": "scanner"
+  },
+  "0404:0203": {
+   "model": "78XX Scanner - Embedded System",
+   "category": "scanner"
+  },
+  "0404:0310": {
+   "model": "K590 Printer, Self-Service",
+   "category": "printer"
+  },
+  "0404:0311": {
+   "model": "7167 Printer, Receipt/Slip",
+   "category": "printer"
+  },
+  "0404:0312": {
+   "model": "7197 Printer Receipt",
+   "category": "printer"
+  },
+  "0404:0320": {
+   "model": "5932-USB Keyboard",
+   "category": "keyboard"
+  },
+  "0404:0321": {
+   "model": "5953-USB Dynakey",
+   "category": null
+  },
+  "0404:0322": {
+   "model": "5932-USB Enhanced Keyboard",
+   "category": "keyboard"
+  },
+  "0404:0323": {
+   "model": "5932-USB Enhanced Keyboard, Flash-Recovery/Download",
+   "category": "keyboard"
+  },
+  "0404:0324": {
+   "model": "5953-USB Enhanced Dynakey",
+   "category": null
+  },
+  "0404:0325": {
+   "model": "5953-USB Enhanced Dynakey Flash-Recovery/Download",
+   "category": null
+  },
+  "0404:0328": {
+   "model": "K016: USB-MSR ISO 3-track MSR: POS Standard (See HID pages)",
+   "category": "card_reader"
+  },
+  "0404:0329": {
+   "model": "K018: USB-MSR JIS 2-Track MSR: POS Standard",
+   "category": "card_reader"
+  },
+  "0404:032a": {
+   "model": "K016: USB-MSR ISO 3-Track MSR: HID Keyboard Mode",
+   "category": "card_reader"
+  },
+  "0404:032b": {
+   "model": "K016/K018: USB-MSR Flash-Recovery/Download",
+   "category": "card_reader"
+  },
+  "04b8:0001": {
+   "model": "Stylus Color 740 / Photo 750",
+   "category": "printer"
+  },
+  "04b8:0002": {
+   "model": "ISD Smart Cable for Mac",
+   "category": "printer"
+  },
+  "04b8:0003": {
+   "model": "ISD Smart Cable",
+   "category": "printer"
+  },
+  "04b8:0004": {
+   "model": "Printer",
+   "category": "printer"
+  },
+  "04b8:0005": {
+   "model": "Printer",
+   "category": "printer"
+  },
+  "04b8:0006": {
+   "model": "Printer",
+   "category": "printer"
+  },
+  "04b8:0007": {
+   "model": "Printer",
+   "category": "printer"
+  },
+  "04b8:0015": {
+   "model": "Stylus Photo R3000",
+   "category": "printer"
+  },
+  "04b8:0080": {
+   "model": "SC-P400 Series",
+   "category": "printer"
+  },
+  "04b8:0101": {
+   "model": "GT-7000U [Perfection 636]",
+   "category": "printer"
+  },
+  "04b8:0102": {
+   "model": "GT-2200",
+   "category": "printer"
+  },
+  "04b8:0103": {
+   "model": "GT-6600U [Perfection 610]",
+   "category": "printer"
+  },
+  "04b8:0104": {
+   "model": "GT-7600UF [Perfection 1200U/1200U Photo]",
+   "category": "printer"
+  },
+  "04b8:0105": {
+   "model": "Stylus Scan 2000",
+   "category": "printer"
+  },
+  "04b8:0106": {
+   "model": "Stylus Scan 2500",
+   "category": "printer"
+  },
+  "04b8:0107": {
+   "model": "ES-2000 [Expression 1600U]",
+   "category": "printer"
+  },
+  "04b8:0108": {
+   "model": "CC-700",
+   "category": "printer"
+  },
+  "04b8:0109": {
+   "model": "ES-8500 [Expression 1640 XL]",
+   "category": "printer"
+  },
+  "04b8:010a": {
+   "model": "GT-8700/GT-8700F [Perfection 1640SU/1640SU PHOTO]",
+   "category": "printer"
+  },
+  "04b8:010b": {
+   "model": "GT-7700U [Perfection 1240U]",
+   "category": "printer"
+  },
+  "04b8:010c": {
+   "model": "GT-6700U [Perfection 640]",
+   "category": "printer"
+  },
+  "04b8:010d": {
+   "model": "CC-500L",
+   "category": "printer"
+  },
+  "04b8:010e": {
+   "model": "ES-2200 [Perfection 1680]",
+   "category": "printer"
+  },
+  "04b8:010f": {
+   "model": "GT-7200U [Perfection 1250/1250 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0110": {
+   "model": "GT-8200U/GT-8200UF [Perfection 1650/1650 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0112": {
+   "model": "GT-9700F [Perfection 2450 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0114": {
+   "model": "Perfection 660",
+   "category": "printer"
+  },
+  "04b8:0116": {
+   "model": "GT-9400UF [Perfection 3170]",
+   "category": "printer"
+  },
+  "04b8:0118": {
+   "model": "GT-F600 [Perfection 4180]",
+   "category": "printer"
+  },
+  "04b8:0119": {
+   "model": "GT-X750 [Perfection 4490 Photo]",
+   "category": "printer"
+  },
+  "04b8:011a": {
+   "model": "CC-550L [1000 ICS]",
+   "category": "printer"
+  },
+  "04b8:011b": {
+   "model": "GT-9300UF [Perfection 2400 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:011c": {
+   "model": "GT-9800F [Perfection 3200]",
+   "category": "printer"
+  },
+  "04b8:011d": {
+   "model": "GT-7300U [Perfection 1260/1260 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:011e": {
+   "model": "GT-8300UF [Perfection 1660 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:011f": {
+   "model": "GT-8400UF [Perfection 1670/1670 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0120": {
+   "model": "GT-7400U [Perfection 1270]",
+   "category": "printer"
+  },
+  "04b8:0121": {
+   "model": "GT-F500/GT-F550 [Perfection 2480/2580 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0122": {
+   "model": "GT-F520/GT-F570 [Perfection 3590 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:0126": {
+   "model": "ES-7000H [GT-15000]",
+   "category": "printer"
+  },
+  "04b8:0128": {
+   "model": "GT-X700 [Perfection 4870]",
+   "category": "printer"
+  },
+  "04b8:0129": {
+   "model": "ES-10000G [Expression 10000XL]",
+   "category": "printer"
+  },
+  "04b8:012a": {
+   "model": "GT-X800 [Perfection 4990 PHOTO]",
+   "category": "printer"
+  },
+  "04b8:012b": {
+   "model": "ES-H300 [GT-2500]",
+   "category": "printer"
+  },
+  "04b8:012c": {
+   "model": "GT-X900 [Perfection V700/V750 Photo]",
+   "category": "printer"
+  },
+  "04b8:012d": {
+   "model": "GT-F650 [GT-S600/Perfection V10/V100]",
+   "category": "printer"
+  },
+  "04b8:012e": {
+   "model": "GT-F670 [Perfection V200 Photo]",
+   "category": "printer"
+  },
+  "04b8:012f": {
+   "model": "GT-F700 [Perfection V350]",
+   "category": "printer"
+  },
+  "04b8:0130": {
+   "model": "GT-X770 [Perfection V500]",
+   "category": "printer"
+  },
+  "04b8:0131": {
+   "model": "GT-F720 [GT-S620/Perfection V30/V300 Photo]",
+   "category": "printer"
+  },
+  "04b8:0133": {
+   "model": "GT-1500 [GT-D1000]",
+   "category": "printer"
+  },
+  "04b8:0135": {
+   "model": "GT-X970",
+   "category": "printer"
+  },
+  "04b8:0136": {
+   "model": "ES-D400 [GT-S80]",
+   "category": "printer"
+  },
+  "04b8:0137": {
+   "model": "ES-D200 [GT-S50]",
+   "category": "printer"
+  },
+  "04b8:0138": {
+   "model": "ES-H7200 [GT-20000]",
+   "category": "printer"
+  },
+  "04b8:013a": {
+   "model": "GT-X820 [Perfection V600 Photo]",
+   "category": "printer"
+  },
+  "04b8:0142": {
+   "model": "GT-F730 [GT-S630/Perfection V33/V330 Photo]",
+   "category": "printer"
+  },
+  "04b8:0143": {
+   "model": "GT-S55",
+   "category": "printer"
+  },
+  "04b8:0144": {
+   "model": "GT-S85",
+   "category": "printer"
+  },
+  "04b8:0151": {
+   "model": "Perfection V800 Photo",
+   "category": "printer"
+  },
+  "04b8:0202": {
+   "model": "Interface Card UB-U05 for Thermal Receipt Printers [M129C/TM-T70/TM-T88IV]",
+   "category": "printer"
+  },
+  "04b8:0401": {
+   "model": "CP 800 Digital Camera",
+   "category": "printer"
+  },
+  "04b8:0402": {
+   "model": "PhotoPC 850z",
+   "category": "printer"
+  },
+  "04b8:0403": {
+   "model": "PhotoPC 3000z",
+   "category": "printer"
+  },
+  "04b8:0509": {
+   "model": "JVC PIX-MC10",
+   "category": "printer"
+  },
+  "04b8:0601": {
+   "model": "Stylus Photo 875DC Card Reader",
+   "category": "printer"
+  },
+  "04b8:0602": {
+   "model": "Stylus Photo 895 Card Reader",
+   "category": "printer"
+  },
+  "04b8:0801": {
+   "model": "CC-600PX [Stylus CX5200/CX5400/CX6600]",
+   "category": "printer"
+  },
+  "04b8:0802": {
+   "model": "CC-570L [Stylus CX3100/CX3200]",
+   "category": "printer"
+  },
+  "04b8:0803": {
+   "model": "Printer (Composite Device)",
+   "category": "printer"
+  },
+  "04b8:0804": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:0805": {
+   "model": "Stylus CX6300/CX6400",
+   "category": "printer"
+  },
+  "04b8:0806": {
+   "model": "PM-A850 [Stylus Photo RX600/610]",
+   "category": "printer"
+  },
+  "04b8:0807": {
+   "model": "Stylus Photo RX500/510",
+   "category": "printer"
+  },
+  "04b8:0808": {
+   "model": "Stylus CX5200/CX5300/CX5400",
+   "category": "printer"
+  },
+  "04b8:0809": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:080a": {
+   "model": "F-3200",
+   "category": "printer"
+  },
+  "04b8:080c": {
+   "model": "ME100 [Stylus CX1500]",
+   "category": "printer"
+  },
+  "04b8:080d": {
+   "model": "Stylus CX4500/4600",
+   "category": "printer"
+  },
+  "04b8:080e": {
+   "model": "PX-A550 [CX-3500/3600/3650 MFP]",
+   "category": "printer"
+  },
+  "04b8:080f": {
+   "model": "Stylus Photo RX420/RX425/RX430",
+   "category": "printer"
+  },
+  "04b8:0810": {
+   "model": "PM-A900 [Stylus Photo RX700]",
+   "category": "printer"
+  },
+  "04b8:0811": {
+   "model": "PM-A870 [Stylus Photo RX620/RX630]",
+   "category": "printer"
+  },
+  "04b8:0812": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:0813": {
+   "model": "Stylus CX6500/6600",
+   "category": "printer"
+  },
+  "04b8:0814": {
+   "model": "PM-A700",
+   "category": "printer"
+  },
+  "04b8:0815": {
+   "model": "LP-A500 [AcuLaser CX1]",
+   "category": "printer"
+  },
+  "04b8:0816": {
+   "model": "Printer (Composite Device)",
+   "category": "printer"
+  },
+  "04b8:0817": {
+   "model": "LP-M5500/LP-M5500F",
+   "category": "printer"
+  },
+  "04b8:0818": {
+   "model": "Stylus CX3700/CX3800/DX3800",
+   "category": "printer"
+  },
+  "04b8:0819": {
+   "model": "PX-A650 [Stylus CX4700/CX4800/DX4800/DX4850]",
+   "category": "printer"
+  },
+  "04b8:081a": {
+   "model": "PM-A750 [Stylus Photo RX520/RX530]",
+   "category": "printer"
+  },
+  "04b8:081b": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:081c": {
+   "model": "PM-A890 [Stylus Photo RX640/RX650]",
+   "category": "printer"
+  },
+  "04b8:081d": {
+   "model": "PM-A950",
+   "category": "printer"
+  },
+  "04b8:081e": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:081f": {
+   "model": "Stylus CX7700/7800",
+   "category": "printer"
+  },
+  "04b8:0820": {
+   "model": "Stylus CX4100/CX4200/DX4200",
+   "category": "printer"
+  },
+  "04b8:0821": {
+   "model": "Stylus CX5700F/CX5800F",
+   "category": "printer"
+  },
+  "04b8:0822": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:0823": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:0824": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:0825": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:0826": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:0827": {
+   "model": "PM-A820 [Stylus Photo RX560/RX580/RX585/RX590]",
+   "category": "printer"
+  },
+  "04b8:0828": {
+   "model": "PM-A970",
+   "category": "printer"
+  },
+  "04b8:0829": {
+   "model": "PM-T990",
+   "category": "printer"
+  },
+  "04b8:082a": {
+   "model": "PM-A920",
+   "category": "printer"
+  },
+  "04b8:082b": {
+   "model": "Stylus CX5900/CX5000/DX5000/DX5050",
+   "category": "printer"
+  },
+  "04b8:082c": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:082d": {
+   "model": "Storage Device",
+   "category": "printer"
+  },
+  "04b8:082e": {
+   "model": "PX-A720 [Stylus CX5900/CX6000/DX6000]",
+   "category": "printer"
+  },
+  "04b8:082f": {
+   "model": "PX-A620 [Stylus CX3900/DX4000/DX4050]",
+   "category": "printer"
+  },
+  "04b8:0830": {
+   "model": "ME 200 [Stylus CX2800/CX2900]",
+   "category": "printer"
+  },
+  "04b8:0831": {
+   "model": "Stylus CX6900F/CX7000F/DX7000F",
+   "category": "printer"
+  },
+  "04b8:0832": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:0833": {
+   "model": "LP-M5600",
+   "category": "printer"
+  },
+  "04b8:0834": {
+   "model": "LP-M6000",
+   "category": "printer"
+  },
+  "04b8:0835": {
+   "model": "AcuLaser CX21",
+   "category": "printer"
+  },
+  "04b8:0836": {
+   "model": "PM-T960",
+   "category": "printer"
+  },
+  "04b8:0837": {
+   "model": "PM-A940 [Stylus Photo RX680/RX685/RX690]",
+   "category": "printer"
+  },
+  "04b8:0838": {
+   "model": "PX-A640 [CX7300/CX7400/DX7400]",
+   "category": "printer"
+  },
+  "04b8:0839": {
+   "model": "PX-A740 [CX8300/CX8400/DX8400]",
+   "category": "printer"
+  },
+  "04b8:083a": {
+   "model": "PX-FA700 [CX9300F/CX9400Fax/DX9400F]",
+   "category": "printer"
+  },
+  "04b8:083b": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:083c": {
+   "model": "PM-A840S [Stylus Photo RX595/RX610]",
+   "category": "printer"
+  },
+  "04b8:083d": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:083e": {
+   "model": "MFP Composite Device",
+   "category": "printer"
+  },
+  "04b8:083f": {
+   "model": "Stylus CX4300/CX4400/CX5500/CX5600/DX4400/DX4450",
+   "category": "printer"
+  },
+  "04b8:0841": {
+   "model": "PX-401A [ME 300/Stylus NX100]",
+   "category": "printer"
+  },
+  "04b8:0843": {
+   "model": "LP-M5000",
+   "category": "printer"
+  },
+  "04b8:0844": {
+   "model": "EP-901A/EP-901F [Artisan 800/Stylus Photo PX800FW]",
+   "category": "printer"
+  },
+  "04b8:0846": {
+   "model": "EP-801A [Artisan 700/Stylus Photo PX700W/TX700W]",
+   "category": "printer"
+  },
+  "04b8:0847": {
+   "model": "PX-601F [ME Office 700FW/Stylus Office BX600FW/TX600FW]",
+   "category": "printer"
+  },
+  "04b8:0848": {
+   "model": "ME Office 600F/Stylus Office BX300F/TX300F",
+   "category": "printer"
+  },
+  "04b8:0849": {
+   "model": "Stylus SX205",
+   "category": "printer"
+  },
+  "04b8:084a": {
+   "model": "PX-501A [Stylus NX400]",
+   "category": "printer"
+  },
+  "04b8:084d": {
+   "model": "PX-402A [Stylus SX115/Stylus NX110 Series]",
+   "category": "printer"
+  },
+  "04b8:084f": {
+   "model": "Multifunctional Printer Scanner [ME Office 510 / Epson Stylus SX215]",
+   "category": "scanner"
+  },
+  "04b8:0850": {
+   "model": "EP-702A [Stylus Photo PX650/TX650 Series]",
+   "category": "printer"
+  },
+  "04b8:0851": {
+   "model": "Stylus SX410",
+   "category": "printer"
+  },
+  "04b8:0852": {
+   "model": "EP-802A [Artisan 710 Series/Stylus Photo PX710W/TX720W Series]",
+   "category": "printer"
+  },
+  "04b8:0853": {
+   "model": "EP-902A [Artisan 810 Series/Stylus Photo PX810FW Series]",
+   "category": "printer"
+  },
+  "04b8:0854": {
+   "model": "ME OFFICE 650FN Series/Stylus Office BX310FN/TX520FN Series",
+   "category": "printer"
+  },
+  "04b8:0855": {
+   "model": "PX-602F [Stylus Office BX610FW/TX620FW Series]",
+   "category": "printer"
+  },
+  "04b8:0856": {
+   "model": "PX-502A [Stylus SX515W]",
+   "category": "printer"
+  },
+  "04b8:085c": {
+   "model": "ME 320/330 Series [Stylus SX125]",
+   "category": "printer"
+  },
+  "04b8:085d": {
+   "model": "PX-603F [ME OFFICE 960FWD Series/Stylus Office BX625FWD/TX620FWD Series]",
+   "category": "printer"
+  },
+  "04b8:085e": {
+   "model": "PX-503A [ME OFFICE 900WD Series/Stylus Office BX525WD]",
+   "category": "printer"
+  },
+  "04b8:085f": {
+   "model": "Stylus Office BX320FW/TX525FW Series",
+   "category": "printer"
+  },
+  "04b8:0860": {
+   "model": "EP-903A/EP-903F [Artisan 835/Stylus Photo PX820FWD Series]",
+   "category": "printer"
+  },
+  "04b8:0861": {
+   "model": "EP-803A/EP-803AW [Artisan 725/Stylus Photo PX720WD/TX720WD Series]",
+   "category": "printer"
+  },
+  "04b8:0862": {
+   "model": "EP-703A [Stylus Photo PX660 Series]",
+   "category": "printer"
+  },
+  "04b8:0863": {
+   "model": "ME OFFICE 620F Series/Stylus Office BX305F/BX305FW/TX320F",
+   "category": "printer"
+  },
+  "04b8:0864": {
+   "model": "ME OFFICE 560W Series",
+   "category": "printer"
+  },
+  "04b8:0865": {
+   "model": "ME OFFICE 520 Series",
+   "category": "printer"
+  },
+  "04b8:0866": {
+   "model": "AcuLaser MX20DN/MX20DNF/MX21DNF",
+   "category": "printer"
+  },
+  "04b8:0869": {
+   "model": "PX-1600F",
+   "category": "printer"
+  },
+  "04b8:086a": {
+   "model": "PX-673F [Stylus Office BX925FWD]",
+   "category": "printer"
+  },
+  "04b8:0870": {
+   "model": "Stylus Office BX305FW Plus",
+   "category": "printer"
+  },
+  "04b8:0871": {
+   "model": "K200 Series",
+   "category": "printer"
+  },
+  "04b8:0872": {
+   "model": "K300 Series",
+   "category": "printer"
+  },
+  "04b8:0873": {
+   "model": "L200 Series",
+   "category": "printer"
+  },
+  "04b8:0878": {
+   "model": "EP-704A",
+   "category": "printer"
+  },
+  "04b8:0879": {
+   "model": "EP-904A/EP-904F [Artisan 837/Stylus Photo PX830FWD Series]",
+   "category": "printer"
+  },
+  "04b8:087b": {
+   "model": "EP-804A/EP-804AR/EP-804AW [Stylus Photo PX730WD/Artisan 730 Series]",
+   "category": "printer"
+  },
+  "04b8:087c": {
+   "model": "PX-1700F",
+   "category": "printer"
+  },
+  "04b8:087d": {
+   "model": "PX-B750F/WP-4525 Series",
+   "category": "printer"
+  },
+  "04b8:087f": {
+   "model": "PX-403A",
+   "category": "printer"
+  },
+  "04b8:0880": {
+   "model": "PX-434A [Stylus NX330 Series]",
+   "category": "printer"
+  },
+  "04b8:0881": {
+   "model": "PX-404A [ME OFFICE 535]",
+   "category": "printer"
+  },
+  "04b8:0883": {
+   "model": "ME 340 Series/Stylus NX130 Series",
+   "category": "printer"
+  },
+  "04b8:0884": {
+   "model": "Stylus NX430W Series",
+   "category": "printer"
+  },
+  "04b8:0885": {
+   "model": "Stylus NX230/SX235W Series",
+   "category": "printer"
+  },
+  "04b8:088f": {
+   "model": "Stylus Office BX635FWD",
+   "category": "printer"
+  },
+  "04b8:0890": {
+   "model": "ME OFFICE 940FW Series/Stylus Office BX630FW Series",
+   "category": "printer"
+  },
+  "04b8:0891": {
+   "model": "Stylus Office BX535WD",
+   "category": "printer"
+  },
+  "04b8:0892": {
+   "model": "Stylus Office BX935FWD",
+   "category": "printer"
+  },
+  "04b8:0893": {
+   "model": "EP-774A",
+   "category": "printer"
+  },
+  "04b8:08d1": {
+   "model": "L220/L360 Series",
+   "category": "printer"
+  },
+  "04b8:0e03": {
+   "model": "Thermal Receipt Printer [TM-T20]",
+   "category": "printer"
+  },
+  "04b8:0e31": {
+   "model": "Thermal Receipt Printer [TM-L100]",
+   "category": "printer"
+  },
+  "04b8:1114": {
+   "model": "XP-440 [Expression Home Small-in-One Printer]",
+   "category": "printer"
+  },
+  "04b8:1115": {
+   "model": "ES-0133 [Expression Home XP-342]",
+   "category": "printer"
+  },
+  "04b8:1129": {
+   "model": "ET-4750 [WorkForce ET-4750 EcoTank All-in-One]",
+   "category": "printer"
+  },
+  "04b8:1168": {
+   "model": "Workforce WF-7820/7840 Series",
+   "category": "printer"
+  },
+  "04b8:1186": {
+   "model": "ET-2820 Series [ET-2820 EcoTank All-in-One]",
+   "category": "printer"
+  },
+  "04b8:118a": {
+   "model": "ET-2810/L3250 Series [EcoTank ET-2810/L3250]",
+   "category": "printer"
+  },
+  "04b8:118b": {
+   "model": "ET-2850/L4260 Series [EcoTank ET-2850/L4260]",
+   "category": "printer"
+  },
+  "04b8:11b0": {
+   "model": "XP-4200 Series [Expression Home XP-4200]",
+   "category": "printer"
+  },
+  "04b8:11b9": {
+   "model": "ET-2830/L3550 Series [EcoTank ET-2830/L3550]",
+   "category": "printer"
+  },
+  "04b8:11c8": {
+   "model": "ET-2860/L3270 Series [EcoTank ET-2860/L3270]",
+   "category": "printer"
+  },
+  "04e6:0001": {
+   "model": "E-USB ATA Bridge",
+   "category": "card_reader"
+  },
+  "04e6:0002": {
+   "model": "eUSCSI SCSI Bridge",
+   "category": "card_reader"
+  },
+  "04e6:0003": {
+   "model": "eUSB SmartMedia Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:0005": {
+   "model": "eUSB SmartMedia/CompactFlash Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:0006": {
+   "model": "eUSB SmartMedia Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:0007": {
+   "model": "Hifd",
+   "category": "card_reader"
+  },
+  "04e6:0009": {
+   "model": "eUSB ATA/ATAPI Adapter",
+   "category": "card_reader"
+  },
+  "04e6:000a": {
+   "model": "eUSB CompactFlash Adapter",
+   "category": "card_reader"
+  },
+  "04e6:000b": {
+   "model": "eUSCSI Bridge",
+   "category": "card_reader"
+  },
+  "04e6:000c": {
+   "model": "eUSCSI Bridge",
+   "category": "card_reader"
+  },
+  "04e6:000d": {
+   "model": "Dazzle MS",
+   "category": "card_reader"
+  },
+  "04e6:0012": {
+   "model": "Dazzle SD/MMC",
+   "category": "card_reader"
+  },
+  "04e6:0101": {
+   "model": "eUSB ATA Bridge (Sony Spressa USB CDRW)",
+   "category": "card_reader"
+  },
+  "04e6:0311": {
+   "model": "Dazzle DM-CF",
+   "category": "card_reader"
+  },
+  "04e6:0312": {
+   "model": "Dazzle DM-SD/MMC",
+   "category": "card_reader"
+  },
+  "04e6:0313": {
+   "model": "Dazzle SM",
+   "category": "card_reader"
+  },
+  "04e6:0314": {
+   "model": "Dazzle MS",
+   "category": "card_reader"
+  },
+  "04e6:0322": {
+   "model": "e-Film Reader-5",
+   "category": "card_reader"
+  },
+  "04e6:0325": {
+   "model": "eUSB ORCA Quad Reader",
+   "category": "card_reader"
+  },
+  "04e6:0327": {
+   "model": "Digital Media Reader",
+   "category": "card_reader"
+  },
+  "04e6:03fe": {
+   "model": "DMHS2 DFU Adapter",
+   "category": "card_reader"
+  },
+  "04e6:0406": {
+   "model": "eUSB SmartDM Reader",
+   "category": "card_reader"
+  },
+  "04e6:04e6": {
+   "model": "eUSB DFU Adapter",
+   "category": "card_reader"
+  },
+  "04e6:04e7": {
+   "model": "STCII DFU Adapter",
+   "category": "card_reader"
+  },
+  "04e6:04e8": {
+   "model": "eUSBDM DFU Adapter",
+   "category": "card_reader"
+  },
+  "04e6:04e9": {
+   "model": "DM-E DFU Adapter",
+   "category": "card_reader"
+  },
+  "04e6:0500": {
+   "model": "Veridicom 5thSense Fingerprint Sensor and eUSB SmartCard",
+   "category": "card_reader"
+  },
+  "04e6:0701": {
+   "model": "DCS200 Loader Device",
+   "category": "card_reader"
+  },
+  "04e6:0702": {
+   "model": "DVD Creation Station 200",
+   "category": "card_reader"
+  },
+  "04e6:0703": {
+   "model": "DVC100 Loader Device",
+   "category": "card_reader"
+  },
+  "04e6:0704": {
+   "model": "Digital Video Creator 100",
+   "category": "card_reader"
+  },
+  "04e6:1001": {
+   "model": "SCR300 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:1010": {
+   "model": "USBAT-2 CompactFlash Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:1014": {
+   "model": "e-Film Reader-3",
+   "category": "card_reader"
+  },
+  "04e6:1020": {
+   "model": "USBAT ATA/ATAPI Adapter",
+   "category": "card_reader"
+  },
+  "04e6:2007": {
+   "model": "RSA SecurID ComboReader",
+   "category": "card_reader"
+  },
+  "04e6:2009": {
+   "model": "Citibank Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:200a": {
+   "model": "Reflex v.2 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:200d": {
+   "model": "STR391 Reader",
+   "category": "card_reader"
+  },
+  "04e6:5111": {
+   "model": "SCR331-DI SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5113": {
+   "model": "SCR333 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5114": {
+   "model": "SCR331-DI SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5115": {
+   "model": "SCR335 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5116": {
+   "model": "SCR331-LC1 / SCR3310 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5117": {
+   "model": "SCR3320 - Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5118": {
+   "model": "Expresscard SIM Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5119": {
+   "model": "SCR3340 - ExpressCard54 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:511b": {
+   "model": "SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:511d": {
+   "model": "SCR3311 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5120": {
+   "model": "SCR331-DI SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:5121": {
+   "model": "SDI010 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5151": {
+   "model": "SCR338 Keyboard Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5292": {
+   "model": "SCL011 RFID reader",
+   "category": "card_reader"
+  },
+  "04e6:5410": {
+   "model": "SCR35xx Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:5591": {
+   "model": "SCL3711-NFC&RW",
+   "category": "card_reader"
+  },
+  "04e6:5810": {
+   "model": "uTrust 2700 R Smart Card Reader",
+   "category": "card_reader"
+  },
+  "04e6:e000": {
+   "model": "SCRx31 Reader",
+   "category": "card_reader"
+  },
+  "04e6:e001": {
+   "model": "SCR331 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e6:e003": {
+   "model": "SPR532 PinPad SmartCard Reader",
+   "category": "card_reader"
+  },
+  "04e7:0001": {
+   "model": "TouchScreen",
+   "category": "touchscreen"
+  },
+  "04e7:0002": {
+   "model": "Touchmonitor Interface 2600 Rev 2",
+   "category": "touchscreen"
+  },
+  "04e7:0004": {
+   "model": "4000U CarrollTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0007": {
+   "model": "2500U IntelliTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0008": {
+   "model": "3000U AccuTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0009": {
+   "model": "4000U CarrollTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0020": {
+   "model": "Touchscreen Interface (2700)",
+   "category": "touchscreen"
+  },
+  "04e7:0021": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0030": {
+   "model": "4500U CarrollTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0032": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0033": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0041": {
+   "model": "5010 Surface Capacitive Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0042": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0050": {
+   "model": "2216 AccuTouch® Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0071": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0072": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0081": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:0082": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:00ff": {
+   "model": "Touchmonitor Interface",
+   "category": "touchscreen"
+  },
+  "04e7:2902": {
+   "model": "WLIDS 21.5 Touchscreen",
+   "category": "touchscreen"
+  },
+  "0519:0003": {
+   "model": "TSP100ECO/TSP100II",
+   "category": "printer"
+  },
+  "0519:c002": {
+   "model": "Xlive Bluetooth XBM-100S MP3 Player",
+   "category": "printer"
+  },
+  "0536:01a0": {
+   "model": "PDT",
+   "category": "scanner"
+  },
+  "0536:01ca": {
+   "model": "IT4800 Area Imager",
+   "category": "scanner"
+  },
+  "053a:0b00": {
+   "model": "Hub",
+   "category": "keyboard"
+  },
+  "053a:0b01": {
+   "model": "Preh MCI 3100",
+   "category": "keyboard"
+  },
+  "05ba:0007": {
+   "model": "Fingerprint Reader",
+   "category": "biometric"
+  },
+  "05ba:0008": {
+   "model": "Fingerprint Reader",
+   "category": "biometric"
+  },
+  "05ba:000a": {
+   "model": "Fingerprint Reader",
+   "category": "biometric"
+  },
+  "05e0:0700": {
+   "model": "Bar Code Scanner (CS1504)",
+   "category": "scanner"
+  },
+  "05e0:0800": {
+   "model": "Spectrum24 Wireless LAN Adapter",
+   "category": "scanner"
+  },
+  "05e0:1200": {
+   "model": "Bar Code Scanner",
+   "category": "scanner"
+  },
+  "05e0:1701": {
+   "model": "Bar Code Scanner (CDC)",
+   "category": "scanner"
+  },
+  "05e0:1900": {
+   "model": "SNAPI Imaging Device",
+   "category": "scanner"
+  },
+  "05e0:1a00": {
+   "model": "CS4070 Barcode Scanner",
+   "category": "scanner"
+  },
+  "05e0:2000": {
+   "model": "MC3090 Rugged Mobile Computer",
+   "category": "scanner"
+  },
+  "05e0:200d": {
+   "model": "MC70 Rugged Mobile Computer",
+   "category": "scanner"
+  },
+  "05f9:1104": {
+   "model": "Magellan 2200VS",
+   "category": "scanner"
+  },
+  "05f9:1206": {
+   "model": "Gryphon series (OEM mode)",
+   "category": "scanner"
+  },
+  "05f9:120c": {
+   "model": "Gryphon GD4430-BK",
+   "category": "scanner"
+  },
+  "05f9:2202": {
+   "model": "Point of Sale Handheld Scanner",
+   "category": "scanner"
+  },
+  "05f9:2206": {
+   "model": "Gryphon series (keyboard emulation mode)",
+   "category": "scanner"
+  },
+  "05f9:220c": {
+   "model": "Datalogic Gryphon GD4430",
+   "category": "scanner"
+  },
+  "05f9:2601": {
+   "model": "Datalogic Magellan 1000i Barcode Scanner",
+   "category": "scanner"
+  },
+  "05f9:2602": {
+   "model": "Datalogic Magellan 1100i Barcode Scanner",
+   "category": "scanner"
+  },
+  "05f9:4204": {
+   "model": "Gryphon series (RS-232 emulation mode)",
+   "category": "scanner"
+  },
+  "05f9:5204": {
+   "model": "Datalogic Gryphon GFS4170 (config mode)",
+   "category": "scanner"
+  },
+  "067b:0000": {
+   "model": "PL2301 USB-USB Bridge",
+   "adapter": true
+  },
+  "067b:0001": {
+   "model": "PL2302 USB-USB Bridge",
+   "adapter": true
+  },
+  "067b:0307": {
+   "model": "Motorola Serial Adapter",
+   "adapter": true
+  },
+  "067b:04bb": {
+   "model": "PL2303 Serial (IODATA USB-RSAQ2)",
+   "adapter": true
+  },
+  "067b:0600": {
+   "model": "IDE Bridge",
+   "adapter": true
+  },
+  "067b:0610": {
+   "model": "Onext EG210U MODEM",
+   "adapter": true
+  },
+  "067b:0611": {
+   "model": "AlDiga AL-11U Quad-band GSM/GPRS/EDGE modem",
+   "adapter": true
+  },
+  "067b:1231": {
+   "model": "Orico SATA External Hard Disk Drive Lay-Flat Docking Station with USB 3.0 & eSATA interfaces.",
+   "adapter": true
+  },
+  "067b:2303": {
+   "model": "PL2303 Serial Port / Mobile Phone Data Cable",
+   "adapter": true
+  },
+  "067b:2305": {
+   "model": "PL2305 Parallel Port",
+   "adapter": true
+  },
+  "067b:2306": {
+   "model": "Raylink Bridge Controller",
+   "adapter": true
+  },
+  "067b:2307": {
+   "model": "PL2307 USB-ATAPI4 Bridge",
+   "adapter": true
+  },
+  "067b:2313": {
+   "model": "FITEL PHS U Cable Adaptor",
+   "adapter": true
+  },
+  "067b:2315": {
+   "model": "Flash Disk Embedded Hub",
+   "adapter": true
+  },
+  "067b:2316": {
+   "model": "Flash Disk Security Device",
+   "adapter": true
+  },
+  "067b:2317": {
+   "model": "Mass Storage Device",
+   "adapter": true
+  },
+  "067b:23a3": {
+   "model": "ATEN Serial Bridge",
+   "adapter": true
+  },
+  "067b:2501": {
+   "model": "PL2501 USB-USB Bridge (USB 2.0)",
+   "adapter": true
+  },
+  "067b:2506": {
+   "model": "Kaser 8gB micro hard drive",
+   "adapter": true
+  },
+  "067b:2507": {
+   "model": "PL2507 Hi-speed USB to IDE bridge controller",
+   "adapter": true
+  },
+  "067b:2515": {
+   "model": "Flash Disk Embedded Hub",
+   "adapter": true
+  },
+  "067b:2517": {
+   "model": "Flash Disk Mass Storage Device",
+   "adapter": true
+  },
+  "067b:2528": {
+   "model": "Storage device (8gB thumb drive)",
+   "adapter": true
+  },
+  "067b:2571": {
+   "model": "LG Electronics GE24LU21",
+   "adapter": true
+  },
+  "067b:25a1": {
+   "model": "PL25A1 Host-Host Bridge",
+   "adapter": true
+  },
+  "067b:2773": {
+   "model": "PL2773 SATAII bridge controller",
+   "adapter": true
+  },
+  "067b:3400": {
+   "model": "Hi-Speed Flash Disk with TruePrint AES3400",
+   "adapter": true
+  },
+  "067b:3500": {
+   "model": "Hi-Speed Flash Disk with TruePrint AES3500",
+   "adapter": true
+  },
+  "067b:3507": {
+   "model": "PL3507 ATAPI6 Bridge",
+   "adapter": true
+  },
+  "067b:aaa0": {
+   "model": "Prolific Pharos",
+   "adapter": true
+  },
+  "067b:aaa2": {
+   "model": "PL2303 Serial Adapter (IODATA USB-RSAQ3)",
+   "adapter": true
+  },
+  "067b:aaa3": {
+   "model": "PL2303x Serial Adapter",
+   "adapter": true
+  },
+  "067e:0801": {
+   "model": "HID Keyboard, Barcode scanner",
+   "category": "scanner"
+  },
+  "067e:0803": {
+   "model": "VCP, Barcode scanner",
+   "category": "scanner"
+  },
+  "067e:0805": {
+   "model": "VCP + UVC, Barcode scanner",
+   "category": "scanner"
+  },
+  "067e:1001": {
+   "model": "Mobile Computer",
+   "category": null
+  },
+  "072f:0001": {
+   "model": "AC1030-based SmartCard Reader",
+   "category": "card_reader"
+  },
+  "072f:0008": {
+   "model": "ACR 80 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "072f:0100": {
+   "model": "AET65",
+   "category": "card_reader"
+  },
+  "072f:0101": {
+   "model": "AET65",
+   "category": "card_reader"
+  },
+  "072f:0102": {
+   "model": "AET62",
+   "category": "card_reader"
+  },
+  "072f:0103": {
+   "model": "AET62",
+   "category": "card_reader"
+  },
+  "072f:0901": {
+   "model": "ACR1281U-C4 (BSI)",
+   "category": "card_reader"
+  },
+  "072f:1000": {
+   "model": "PLDT Drive",
+   "category": "card_reader"
+  },
+  "072f:1001": {
+   "model": "PLDT Drive",
+   "category": "card_reader"
+  },
+  "072f:2011": {
+   "model": "ACR88U",
+   "category": "card_reader"
+  },
+  "072f:2100": {
+   "model": "ACR128U",
+   "category": "card_reader"
+  },
+  "072f:2200": {
+   "model": "ACR122U",
+   "category": "card_reader"
+  },
+  "072f:220a": {
+   "model": "ACR1281U-C5 (BSI)",
+   "category": "card_reader"
+  },
+  "072f:220c": {
+   "model": "ACR1283 Bootloader",
+   "category": "card_reader"
+  },
+  "072f:220f": {
+   "model": "ACR1281U-C2 (qPBOC)",
+   "category": "card_reader"
+  },
+  "072f:2211": {
+   "model": "ACR1261 1S Dual Reader",
+   "category": "card_reader"
+  },
+  "072f:2214": {
+   "model": "ACR1222 1SAM PICC Reader",
+   "category": "card_reader"
+  },
+  "072f:2215": {
+   "model": "ACR1281 2S CL Reader",
+   "category": "card_reader"
+  },
+  "072f:221a": {
+   "model": "ACR1251U-A1",
+   "category": "card_reader"
+  },
+  "072f:221b": {
+   "model": "ACR1251U-C",
+   "category": "card_reader"
+  },
+  "072f:2224": {
+   "model": "ACR1281 1S Dual Reader",
+   "category": "card_reader"
+  },
+  "072f:222b": {
+   "model": "ACR1222U-C8",
+   "category": "card_reader"
+  },
+  "072f:222c": {
+   "model": "ACR1283L-D2",
+   "category": "card_reader"
+  },
+  "072f:222d": {
+   "model": "[OEM Reader]",
+   "category": "card_reader"
+  },
+  "072f:222e": {
+   "model": "ACR123U",
+   "category": "card_reader"
+  },
+  "072f:223f": {
+   "model": "ACR1255U-J1",
+   "category": "card_reader"
+  },
+  "072f:2242": {
+   "model": "ACR1251 1S Dual Reader",
+   "category": "card_reader"
+  },
+  "072f:8002": {
+   "model": "AET63 BioTRUSTKey",
+   "category": "card_reader"
+  },
+  "072f:8003": {
+   "model": "ACR120",
+   "category": "card_reader"
+  },
+  "072f:8103": {
+   "model": "ACR120",
+   "category": "card_reader"
+  },
+  "072f:8201": {
+   "model": "APG8201",
+   "category": "card_reader"
+  },
+  "072f:8900": {
+   "model": "ACR89U-A1",
+   "category": "card_reader"
+  },
+  "072f:8901": {
+   "model": "ACR89U-A2",
+   "category": "card_reader"
+  },
+  "072f:8902": {
+   "model": "ACR89U-A3",
+   "category": "card_reader"
+  },
+  "072f:9000": {
+   "model": "ACR38 AC1038-based Smart Card Reader",
+   "category": "card_reader"
+  },
+  "072f:9006": {
+   "model": "CryptoMate",
+   "category": "card_reader"
+  },
+  "072f:90cc": {
+   "model": "ACR38 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "072f:90ce": {
+   "model": "[OEM Reader]",
+   "category": "card_reader"
+  },
+  "072f:90cf": {
+   "model": "ACR38 SAM Smart Card Reader",
+   "category": "card_reader"
+  },
+  "072f:90d0": {
+   "model": "PertoSmart EMV - Card Reader",
+   "category": "card_reader"
+  },
+  "072f:90d2": {
+   "model": "ACR83U",
+   "category": "card_reader"
+  },
+  "072f:90d8": {
+   "model": "ACR3801",
+   "category": "card_reader"
+  },
+  "072f:90db": {
+   "model": "CryptoMate64",
+   "category": "card_reader"
+  },
+  "072f:b000": {
+   "model": "ACR3901U",
+   "category": "card_reader"
+  },
+  "072f:b100": {
+   "model": "ACR39U",
+   "category": "card_reader"
+  },
+  "072f:b101": {
+   "model": "ACR39K",
+   "category": "card_reader"
+  },
+  "072f:b102": {
+   "model": "ACR39T",
+   "category": "card_reader"
+  },
+  "072f:b103": {
+   "model": "ACR39F",
+   "category": "card_reader"
+  },
+  "072f:b104": {
+   "model": "ACR39U-SAM",
+   "category": "card_reader"
+  },
+  "072f:b106": {
+   "model": "ACOS5T2",
+   "category": "card_reader"
+  },
+  "072f:b200": {
+   "model": "ACOS5T1",
+   "category": "card_reader"
+  },
+  "072f:b301": {
+   "model": "ACR32-A1",
+   "category": "card_reader"
+  },
+  "076b:0596": {
+   "model": "CardMan 2020",
+   "category": "card_reader"
+  },
+  "076b:1021": {
+   "model": "CardMan 1021",
+   "category": "card_reader"
+  },
+  "076b:1221": {
+   "model": "CardMan 1221",
+   "category": "card_reader"
+  },
+  "076b:1784": {
+   "model": "CardMan 6020",
+   "category": "card_reader"
+  },
+  "076b:3021": {
+   "model": "CardMan 3021 / 3121",
+   "category": "card_reader"
+  },
+  "076b:3022": {
+   "model": "CardMan 3121 (HID Technologies)",
+   "category": "card_reader"
+  },
+  "076b:3031": {
+   "model": "3x21 Smart Card Reader",
+   "category": "card_reader"
+  },
+  "076b:3610": {
+   "model": "CardMan 3620",
+   "category": "card_reader"
+  },
+  "076b:3621": {
+   "model": "CardMan 3621",
+   "category": "card_reader"
+  },
+  "076b:3821": {
+   "model": "CardMan 3821",
+   "category": "card_reader"
+  },
+  "076b:4321": {
+   "model": "CardMan 4321",
+   "category": "card_reader"
+  },
+  "076b:5022": {
+   "model": "CardMan 5022",
+   "category": "card_reader"
+  },
+  "076b:5121": {
+   "model": "CardMan 5121",
+   "category": "card_reader"
+  },
+  "076b:5125": {
+   "model": "CardMan 5125",
+   "category": "card_reader"
+  },
+  "076b:5321": {
+   "model": "CardMan 5321",
+   "category": "card_reader"
+  },
+  "076b:5340": {
+   "model": "CardMan 5021 CL",
+   "category": "card_reader"
+  },
+  "076b:6622": {
+   "model": "CardMan 6121",
+   "category": "card_reader"
+  },
+  "076b:a011": {
+   "model": "CCID Smart Card Reader Keyboard",
+   "category": "card_reader"
+  },
+  "076b:a021": {
+   "model": "CCID Smart Card Reader",
+   "category": "card_reader"
+  },
+  "076b:a022": {
+   "model": "CardMan Smart@Link",
+   "category": "card_reader"
+  },
+  "076b:c000": {
+   "model": "CardMan 3x21 CS",
+   "category": "card_reader"
+  },
+  "076b:c001": {
+   "model": "CardMan 5121 CS",
+   "category": "card_reader"
+  },
+  "080c:0300": {
+   "model": "Gryphon D120 Barcode Scanner",
+   "category": "scanner"
+  },
+  "080c:0400": {
+   "model": "Gryphon D120 Barcode Scanner",
+   "category": "scanner"
+  },
+  "080c:0500": {
+   "model": "Gryphon D120 Barcode Scanner",
+   "category": "scanner"
+  },
+  "080c:0600": {
+   "model": "Gryphon M100 Barcode Scanner",
+   "category": "scanner"
+  },
+  "0828:a003": {
+   "model": "WS408 Label Printer",
+   "category": "printer"
+  },
+  "08a6:0051": {
+   "model": "B-SV4",
+   "category": "printer"
+  },
+  "08e6:0001": {
+   "model": "GemPC-Touch 430",
+   "category": "card_reader"
+  },
+  "08e6:0430": {
+   "model": "GemPC430 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:0432": {
+   "model": "GemPC432 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:0435": {
+   "model": "GemPC435 SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:0437": {
+   "model": "GemPC433 SL SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:1359": {
+   "model": "UA SECURE STORAGE TOKEN",
+   "category": "card_reader"
+  },
+  "08e6:2202": {
+   "model": "Gem e-Seal Pro Token",
+   "category": "card_reader"
+  },
+  "08e6:3437": {
+   "model": "GemPC Twin SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:3438": {
+   "model": "GemPC Key SmartCard Reader",
+   "category": "card_reader"
+  },
+  "08e6:3478": {
+   "model": "PinPad Smart Card Reader",
+   "category": "card_reader"
+  },
+  "08e6:34ec": {
+   "model": "Compact Smart Card Reader Writer",
+   "category": "card_reader"
+  },
+  "08e6:4433": {
+   "model": "GemPC433-Swap",
+   "category": "card_reader"
+  },
+  "08e6:5501": {
+   "model": "GemProx-PU Contactless Smart Card Reader",
+   "category": "card_reader"
+  },
+  "08e6:5503": {
+   "model": "Prox-DU Contactless Interface",
+   "category": "card_reader"
+  },
+  "08e6:ace0": {
+   "model": "UA HYBRID TOKEN",
+   "category": "card_reader"
+  },
+  "096e:0005": {
+   "model": "ePass2000",
+   "category": "card_reader"
+  },
+  "096e:0006": {
+   "model": "HID Dongle (for OEMs - manufacturer string is \"OEM\")",
+   "category": "card_reader"
+  },
+  "096e:0120": {
+   "model": "Microcosm Ltd Dinkey",
+   "category": "card_reader"
+  },
+  "096e:0305": {
+   "model": "ePass2000Auto",
+   "category": "card_reader"
+  },
+  "096e:0309": {
+   "model": "ePass3000GM",
+   "category": "card_reader"
+  },
+  "096e:0401": {
+   "model": "ePass3000",
+   "category": "card_reader"
+  },
+  "096e:0405": {
+   "model": "Zzkey Dongle",
+   "category": "card_reader"
+  },
+  "096e:0503": {
+   "model": "SCR301",
+   "category": "card_reader"
+  },
+  "096e:0608": {
+   "model": "SC Reader KP382",
+   "category": "card_reader"
+  },
+  "096e:0702": {
+   "model": "ePass3003",
+   "category": "card_reader"
+  },
+  "096e:0703": {
+   "model": "ePass3003Auto",
+   "category": "card_reader"
+  },
+  "096e:0801": {
+   "model": "Token",
+   "category": "card_reader"
+  },
+  "096e:0802": {
+   "model": "ePass2000 (G&D STARCOS SPK 2.4)",
+   "category": "card_reader"
+  },
+  "096e:0807": {
+   "model": "ePass2003",
+   "category": "card_reader"
+  },
+  "096e:085a": {
+   "model": "Multipass FIDO",
+   "category": "card_reader"
+  },
+  "096e:0891": {
+   "model": "Jubiter Wallet",
+   "category": "card_reader"
+  },
+  "0a5f:0009": {
+   "model": "LP2844 Printer",
+   "category": "printer"
+  },
+  "0a5f:0027": {
+   "model": "ZTC LP2844-Z-200dpi",
+   "category": "printer"
+  },
+  "0a5f:0050": {
+   "model": "P120i / WM120i",
+   "category": "printer"
+  },
+  "0a5f:0062": {
+   "model": "GK420d Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0065": {
+   "model": "ZM400 Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0080": {
+   "model": "GK420d Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0081": {
+   "model": "GK420t Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0084": {
+   "model": "GX420d Desktop Label Printer",
+   "category": "printer"
+  },
+  "0a5f:008b": {
+   "model": "HC100 wristbands Printer",
+   "category": "printer"
+  },
+  "0a5f:008c": {
+   "model": "ZP 450 Printer",
+   "category": "printer"
+  },
+  "0a5f:00a1": {
+   "model": "TLP2824 Plus",
+   "category": "printer"
+  },
+  "0a5f:00d1": {
+   "model": "GC420d Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0110": {
+   "model": "ZD500 Desktop Label Printer",
+   "category": "printer"
+  },
+  "0a5f:011c": {
+   "model": "ZD410 Direct Thermal Label Printer",
+   "category": "printer"
+  },
+  "0a5f:0141": {
+   "model": "ZD620",
+   "category": "printer"
+  },
+  "0a5f:0172": {
+   "model": "ZT411 Barcode Label Printer",
+   "category": "scanner"
+  },
+  "0a5f:930a": {
+   "model": "Printer",
+   "category": "printer"
+  },
+  "0aa7:0100": {
+   "model": "POS Keyboard, TA58P-USB",
+   "category": "keyboard"
+  },
+  "0aa7:0101": {
+   "model": "POS Keyboard, TA85P-USB",
+   "category": "keyboard"
+  },
+  "0aa7:0102": {
+   "model": "POS Keyboard, TA59-USB",
+   "category": "keyboard"
+  },
+  "0aa7:0103": {
+   "model": "POS Keyboard, TA60-USB",
+   "category": "keyboard"
+  },
+  "0aa7:0104": {
+   "model": "SNIkey Keyboard, SNIKey-KB-USB",
+   "category": "keyboard"
+  },
+  "0aa7:0200": {
+   "model": "Operator Display, BA63-USB",
+   "category": "customer_display"
+  },
+  "0aa7:0201": {
+   "model": "Operator Display, BA66-USB",
+   "category": "customer_display"
+  },
+  "0aa7:0202": {
+   "model": "Operator Display & Scanner, XiCheck-BA63",
+   "category": "customer_display"
+  },
+  "0aa7:0203": {
+   "model": "Operator Display & Scanner, XiCheck-BA66",
+   "category": "customer_display"
+  },
+  "0aa7:0204": {
+   "model": "Graphics Operator Display, BA63GV",
+   "category": "customer_display"
+  },
+  "0aa7:0300": {
+   "model": "POS Printer (printer class mode), TH210",
+   "category": "printer"
+  },
+  "0aa7:0301": {
+   "model": "POS Printer (native mode), TH210",
+   "category": "printer"
+  },
+  "0aa7:0302": {
+   "model": "POS Printer (printer class mode), TH220",
+   "category": "printer"
+  },
+  "0aa7:0303": {
+   "model": "POS Printer (native mode), TH220",
+   "category": "printer"
+  },
+  "0aa7:0304": {
+   "model": "POS Printer, TH230",
+   "category": "printer"
+  },
+  "0aa7:0305": {
+   "model": "Lottery Printer, XiPrintPlus",
+   "category": "printer"
+  },
+  "0aa7:0306": {
+   "model": "POS Printer (printer class mode), TH320",
+   "category": "printer"
+  },
+  "0aa7:0307": {
+   "model": "POS Printer (native mode), TH320",
+   "category": "printer"
+  },
+  "0aa7:0308": {
+   "model": "POS Printer (printer class mode), TH420",
+   "category": "printer"
+  },
+  "0aa7:0309": {
+   "model": "POS Printer (native mode), TH420",
+   "category": "printer"
+  },
+  "0aa7:030a": {
+   "model": "POS Printer, TH200B",
+   "category": "printer"
+  },
+  "0aa7:0400": {
+   "model": "Lottery Scanner, Xiscan S",
+   "category": "scanner"
+  },
+  "0aa7:0401": {
+   "model": "Lottery Scanner, Xiscan 3",
+   "category": "scanner"
+  },
+  "0aa7:0402": {
+   "model": "Programmable Magnetic Swipe Card Reader, MSRP-USB",
+   "category": "card_reader"
+  },
+  "0aa7:0500": {
+   "model": "IDE Adapter",
+   "category": null
+  },
+  "0aa7:0501": {
+   "model": "Hub Printer Interface",
+   "category": "printer"
+  },
+  "0aa7:0502": {
+   "model": "Hub SNIKey Keyboard",
+   "category": "keyboard"
+  },
+  "0aa7:4304": {
+   "model": "Banking Printer TP07",
+   "category": "printer"
+  },
+  "0aa7:4305": {
+   "model": "Banking Printer TP07c",
+   "category": "printer"
+  },
+  "0aa7:4500": {
+   "model": "WN Central Special Electronics",
+   "category": null
+  },
+  "0b0b:106e": {
+   "model": "Datamax E-4304",
+   "category": "printer"
+  },
+  "0c2e:0007": {
+   "model": "Metrologic MS7120 Barcode Scanner (IBM SurePOS mode)",
+   "category": "scanner"
+  },
+  "0c2e:0200": {
+   "model": "MS7120 Barcode Scanner",
+   "category": "scanner"
+  },
+  "0c2e:0204": {
+   "model": "Metrologic MS7120 Barcode Scanner (keyboard mode)",
+   "category": "scanner"
+  },
+  "0c2e:0206": {
+   "model": "Metrologic MS4980 Barcode Scanner",
+   "category": "scanner"
+  },
+  "0c2e:0700": {
+   "model": "Metrologic MS7120 Barcode Scanner (uni-directional serial mode)",
+   "category": "scanner"
+  },
+  "0c2e:0720": {
+   "model": "Metrologic MS7120 Barcode Scanner (bi-directional serial mode)",
+   "category": "scanner"
+  },
+  "0c2e:0a64": {
+   "model": "[Stratos 2700]",
+   "category": "scanner"
+  },
+  "0c2e:0b61": {
+   "model": "Vuquest 3310g",
+   "category": "scanner"
+  },
+  "0c2e:0b6a": {
+   "model": "Vuquest 3310 Area-Imaging Scanner",
+   "category": "scanner"
+  },
+  "0c2e:0b81": {
+   "model": "Barcode scanner Voyager 1400g Series",
+   "category": "scanner"
+  },
+  "0d3a:0206": {
+   "model": "Series 3xxx Cash Drawer",
+   "category": "cash_drawer"
+  },
+  "0d3a:0207": {
+   "model": "Series 3xxx Cash Drawer",
+   "category": "cash_drawer"
+  },
+  "0d3a:0500": {
+   "model": "Magnetic Stripe Reader",
+   "category": "card_reader"
+  },
+  "0dd4:0237": {
+   "model": "K80 80mm Thermal Printer",
+   "category": "printer"
+  },
+  "0eb8:2200": {
+   "model": "Ariva Scale",
+   "category": "scale"
+  },
+  "0eb8:f000": {
+   "model": "BC60 Scale",
+   "category": "scale"
+  },
+  "0eef:0001": {
+   "model": "Titan6001 Surface Acoustic Wave Touchscreen Controller [eGalax]",
+   "category": "touchscreen"
+  },
+  "0eef:0002": {
+   "model": "Touchscreen Controller(Professional)",
+   "category": "touchscreen"
+  },
+  "0eef:7200": {
+   "model": "Touchscreen Controller",
+   "category": "touchscreen"
+  },
+  "0eef:7904": {
+   "model": "Multitouch Capacitive Touchscreen eGalaxTouch EXC7904-21v00_T13 [IIyama Prolite T1932-MSC]",
+   "category": "touchscreen"
+  },
+  "0eef:a802": {
+   "model": "eGalaxTouch EXC7920",
+   "category": "touchscreen"
+  },
+  "0eef:b10e": {
+   "model": "eGalaxTouch EXC3000",
+   "category": "touchscreen"
+  },
+  "0eef:c000": {
+   "model": "Multitouch Capacitive Touchscreen eGalaxTouch EXC3188-4643-08.00.00.00 Sirius_4643 PCAP3188UR Series [IIyama Prolite PLT1932MSC]",
+   "category": "touchscreen"
+  },
+  "0f14:0012": {
+   "model": "Vital'Act 3S",
+   "category": "card_reader"
+  },
+  "0f14:0038": {
+   "model": "XIRING Smart Card Terminal LEO V2",
+   "category": "card_reader"
+  },
+  "10c4:0002": {
+   "model": "F32x USBXpress Device",
+   "adapter": true
+  },
+  "10c4:0003": {
+   "model": "CommandIR",
+   "adapter": true
+  },
+  "10c4:800a": {
+   "model": "SPORTident",
+   "adapter": true
+  },
+  "10c4:800b": {
+   "model": "AES",
+   "adapter": true
+  },
+  "10c4:8030": {
+   "model": "K4JRG Ham Radio devices",
+   "adapter": true
+  },
+  "10c4:8044": {
+   "model": "USB Debug Adapter",
+   "adapter": true
+  },
+  "10c4:804e": {
+   "model": "Software Bisque Paramount ME",
+   "adapter": true
+  },
+  "10c4:80a9": {
+   "model": "CP210x to UART Bridge Controller",
+   "adapter": true
+  },
+  "10c4:80c4": {
+   "model": "Infrared Thermometer Adapter",
+   "adapter": true
+  },
+  "10c4:80ca": {
+   "model": "ATM2400 Sensor Device",
+   "adapter": true
+  },
+  "10c4:813f": {
+   "model": "tams EasyControl",
+   "adapter": true
+  },
+  "10c4:8149": {
+   "model": "West Mountain Radio Computerized Battery Analyzer",
+   "adapter": true
+  },
+  "10c4:814a": {
+   "model": "West Mountain Radio RIGblaster P&P",
+   "adapter": true
+  },
+  "10c4:814b": {
+   "model": "West Mountain Radio RIGtalk",
+   "adapter": true
+  },
+  "10c4:818a": {
+   "model": "Silicon Labs FM Radio Reference Design",
+   "adapter": true
+  },
+  "10c4:81e8": {
+   "model": "Zephyr BioHarness",
+   "adapter": true
+  },
+  "10c4:834b": {
+   "model": "Infrared Online Sensor Adapter",
+   "adapter": true
+  },
+  "10c4:834e": {
+   "model": "Infrared Sensor Adapter",
+   "adapter": true
+  },
+  "10c4:8460": {
+   "model": "Sangoma Wanpipe VoiceTime",
+   "adapter": true
+  },
+  "10c4:8461": {
+   "model": "Sangoma U100",
+   "adapter": true
+  },
+  "10c4:8470": {
+   "model": "Juniper Networks BX Series System Console",
+   "adapter": true
+  },
+  "10c4:8477": {
+   "model": "Balluff RFID Reader",
+   "adapter": true
+  },
+  "10c4:8496": {
+   "model": "SiLabs Cypress FW downloader",
+   "adapter": true
+  },
+  "10c4:8497": {
+   "model": "SiLabs Cypress EVB",
+   "adapter": true
+  },
+  "10c4:84fb": {
+   "model": "Infrared Blackbody Adapter",
+   "adapter": true
+  },
+  "10c4:8508": {
+   "model": "RS485 Adapter",
+   "adapter": true
+  },
+  "10c4:8605": {
+   "model": "dilitronics ESoLUX solar lighting controller",
+   "adapter": true
+  },
+  "10c4:8660": {
+   "model": "Netronics CANdoISO",
+   "adapter": true
+  },
+  "10c4:86bc": {
+   "model": "C8051F34x AudioDelay [AD-340]",
+   "adapter": true
+  },
+  "10c4:8789": {
+   "model": "C8051F34x Extender & EDID MGR [EMX-DVI]",
+   "adapter": true
+  },
+  "10c4:87be": {
+   "model": "C8051F34x HDMI Audio Extractor [EMX-HD-AUD]",
+   "adapter": true
+  },
+  "10c4:8863": {
+   "model": "C8051F34x Bootloader",
+   "adapter": true
+  },
+  "10c4:8897": {
+   "model": "C8051F38x HDMI Splitter [UHBX]",
+   "adapter": true
+  },
+  "10c4:88c9": {
+   "model": "AES HID device",
+   "adapter": true
+  },
+  "10c4:8918": {
+   "model": "C8051F38x HDMI Audio Extractor [VSA-HA-DP]",
+   "adapter": true
+  },
+  "10c4:8973": {
+   "model": "C8051F38x HDMI Extender [UHBX-8X]",
+   "adapter": true
+  },
+  "10c4:89c6": {
+   "model": "SPORTident HID device",
+   "adapter": true
+  },
+  "10c4:89e1": {
+   "model": "C8051F38x HDMI Extender [UHBX-SW3-WP]",
+   "adapter": true
+  },
+  "10c4:89fb": {
+   "model": "Qivicon ZigBee Stick",
+   "adapter": true
+  },
+  "10c4:8a3c": {
+   "model": "C8051F38x HDBaseT Receiver [UHBX-R-XT]",
+   "adapter": true
+  },
+  "10c4:8a6c": {
+   "model": "C8051F38x 4K HDMI Audio Extractor [EMX-AMP]",
+   "adapter": true
+  },
+  "10c4:8acb": {
+   "model": "C8051F38x HDBaseT Wall Plate Receiver with IR, RS-232, and PoH [UHBX-R-WP]",
+   "adapter": true
+  },
+  "10c4:8af8": {
+   "model": "C8051F38x 4K HDMI Audio Extractor w/Audio Amplifier, HDBT Input, Line Audio Input RS-232 Ports and IP Control [VSA-X21]",
+   "adapter": true
+  },
+  "10c4:8b8c": {
+   "model": "C8051F38x 4K HDMI Audio Extractor w/Audio Amplifier, HDBT Input, Line Audio Input RS-232 Ports and IP Control [SC-3H]",
+   "adapter": true
+  },
+  "10c4:8db5": {
+   "model": "C8051F38x CATx HDMI Receiver with USB [EX-HDU-R]",
+   "adapter": true
+  },
+  "10c4:8db6": {
+   "model": "C8051F38x CATx HDMI Receiver",
+   "adapter": true
+  },
+  "10c4:ea60": {
+   "model": "CP210x UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea61": {
+   "model": "CP210x UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea63": {
+   "model": "CP210x UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea70": {
+   "model": "CP2105 Dual UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea71": {
+   "model": "CP2108 Quad UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea80": {
+   "model": "CP2110 HID UART Bridge",
+   "adapter": true
+  },
+  "10c4:ea90": {
+   "model": "CP2112 HID I2C Bridge",
+   "adapter": true
+  },
+  "10c4:ea91": {
+   "model": "CP2112 HID SMBus/I2C Bridge for CP2614 Evaluation Kit",
+   "adapter": true
+  },
+  "10c4:ea93": {
+   "model": "CP2112 HID SMBus/I2C Bridge for CP2615 Evaluation Kit",
+   "adapter": true
+  },
+  "10c4:eab0": {
+   "model": "CP2114 I2S Audio Bridge",
+   "adapter": true
+  },
+  "10c4:eac0": {
+   "model": "CP2614 MFi Accessory Digital Audio Bridge",
+   "adapter": true
+  },
+  "10c4:eac1": {
+   "model": "CP2615 I2S Audio Bridge",
+   "adapter": true
+  },
+  "10c4:eac9": {
+   "model": "EFM8UB1 Bootloader",
+   "adapter": true
+  },
+  "10c4:eaca": {
+   "model": "EFM8UB2 Bootloader",
+   "adapter": true
+  },
+  "10c4:eacb": {
+   "model": "EFM8UB3 Bootloader",
+   "adapter": true
+  },
+  "113f:1020": {
+   "model": "Watson Two-Finger Roll Scanner",
+   "category": "scanner"
+  },
+  "113f:1100": {
+   "model": "Columbo Single-Finger Scanner",
+   "category": "scanner"
+  },
+  "11ca:0201": {
+   "model": "MX870/MX880",
+   "category": "pinpad"
+  },
+  "11ca:0207": {
+   "model": "PIN Pad VX 810",
+   "category": "pinpad"
+  },
+  "11ca:0220": {
+   "model": "PIN Pad VX 805",
+   "category": "pinpad"
+  },
+  "1203:0140": {
+   "model": "TTP-245C",
+   "category": "printer"
+  },
+  "1343:0002": {
+   "model": "CW-01",
+   "category": "printer"
+  },
+  "1343:0003": {
+   "model": "CX / DNP DS40",
+   "category": "printer"
+  },
+  "1343:0004": {
+   "model": "CX-W / DNP DS80 / Mitsubishi CP3800",
+   "category": "printer"
+  },
+  "1343:0005": {
+   "model": "CY / DNP DSRX1",
+   "category": "printer"
+  },
+  "1343:0006": {
+   "model": "CW-02 / OP900ii",
+   "category": "printer"
+  },
+  "1343:0007": {
+   "model": "DNP DS80DX",
+   "category": "printer"
+  },
+  "1343:0008": {
+   "model": "DNP DS620 (old)",
+   "category": "printer"
+  },
+  "1343:000a": {
+   "model": "CX-02",
+   "category": "printer"
+  },
+  "1343:000b": {
+   "model": "CX-02W",
+   "category": "printer"
+  },
+  "147e:1000": {
+   "model": "Biometric Touchchip/Touchstrip Fingerprint Sensor",
+   "category": "biometric"
+  },
+  "147e:1001": {
+   "model": "TCS5B Fingerprint sensor",
+   "category": "biometric"
+  },
+  "147e:1002": {
+   "model": "Biometric Touchchip/Touchstrip Fingerprint Sensor",
+   "category": "biometric"
+  },
+  "147e:2016": {
+   "model": "Biometric Touchchip/Touchstrip Fingerprint Sensor",
+   "category": "biometric"
+  },
+  "147e:2020": {
+   "model": "TouchChip Fingerprint Coprocessor (WBF advanced mode)",
+   "category": "biometric"
+  },
+  "147e:3000": {
+   "model": "TCS1C EIM/Cypress Fingerprint sensor",
+   "category": "biometric"
+  },
+  "147e:3001": {
+   "model": "TCS1C EIM/STM32 Fingerprint sensor",
+   "category": "biometric"
+  },
+  "1491:0020": {
+   "model": "FS81 Fingerprint Scanner Module",
+   "category": "scanner"
+  },
+  "1491:0088": {
+   "model": "Fingerprint Scanner Model FS88",
+   "category": "scanner"
+  },
+  "1504:001f": {
+   "model": "SRP-350II Thermal Receipt Printer",
+   "category": "printer"
+  },
+  "16d1:0401": {
+   "model": "SUP-SFR400(A) BioMini Fingerprint Reader",
+   "category": "biometric"
+  },
+  "1753:c901": {
+   "model": "PPC900",
+   "category": "pinpad",
+   "name": "Pinpad Gertec PPC900"
+  },
+  "1a86:5512": {
+   "model": "CH341 in EPP/MEM/I2C mode, EPP/I2C adapter",
+   "adapter": true
+  },
+  "1a86:5523": {
+   "model": "CH341 in serial mode, usb to serial port converter",
+   "adapter": true
+  },
+  "1a86:5584": {
+   "model": "CH341 in parallel mode, usb to printer port converter",
+   "adapter": true
+  },
+  "1a86:7522": {
+   "model": "CH340 serial converter",
+   "adapter": true
+  },
+  "1a86:7523": {
+   "model": "CH340 serial converter",
+   "adapter": true
+  },
+  "1a86:752d": {
+   "model": "CH345 MIDI adapter",
+   "adapter": true
+  },
+  "1a86:7584": {
+   "model": "CH340S",
+   "adapter": true
+  },
+  "1a86:e008": {
+   "model": "HID-based serial adapter",
+   "adapter": true
+  },
+  "1d90:201e": {
+   "model": "PPU-700",
+   "category": "printer"
+  },
+  "1d90:2037": {
+   "model": "CL-S631 Barcode Printer",
+   "category": "scanner"
+  },
+  "1d90:20f0": {
+   "model": "Thermal Receipt Printer [CT-E351]",
+   "category": "printer"
+  },
+  "1eab:0103": {
+   "model": "HR200 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:0106": {
+   "model": "HR200 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:0110": {
+   "model": "HR200 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:0c03": {
+   "model": "HR100/HR3260 cordless/HR3290 cordless/BS80 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:0c06": {
+   "model": "HR100/HR3260 cordless/HR3290 cordless/BS80 Barcode scanner engine (USB Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:0c10": {
+   "model": "HR100/HR3260 cordless/HR3290 cordless/BS80 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:0d03": {
+   "model": "EM2028 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:0d06": {
+   "model": "EM2028 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:0d10": {
+   "model": "EM2028 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1303": {
+   "model": "EM30xx/EM20xx/HR3260 corded/HR200C Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1306": {
+   "model": "EM30xx/EM20xx/HR3260 corded/HR200C Barcode scanner engine (USB serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1310": {
+   "model": "EM30xx/EM20xx/HR3260 corded/HR200C Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1403": {
+   "model": "HR15-xx Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1406": {
+   "model": "HR15-xx Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1410": {
+   "model": "HR15-xx Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1603": {
+   "model": "FM100-M/3250 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1606": {
+   "model": "FM100-M/3250 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1610": {
+   "model": "FM100-M/3250 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1903": {
+   "model": "EM1300 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1906": {
+   "model": "EM1300 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1910": {
+   "model": "EM1300 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1a03": {
+   "model": "HR3290 corded/HR22 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1a06": {
+   "model": "HR3290 corded/HR22 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1a10": {
+   "model": "HR3290 corded/HR22 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1c03": {
+   "model": "HR2150 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1c06": {
+   "model": "HR2150 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1c10": {
+   "model": "HR2150 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1d03": {
+   "model": "FM430 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1d06": {
+   "model": "FM430 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1d10": {
+   "model": "FM430 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1e03": {
+   "model": "HR42 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1e06": {
+   "model": "HR42 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1e10": {
+   "model": "HR42 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:1f03": {
+   "model": "HR11+ Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:1f06": {
+   "model": "HR11+ Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:1f10": {
+   "model": "HR11+ Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:2003": {
+   "model": "EM2037v2 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:2006": {
+   "model": "EM2037v2 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:2010": {
+   "model": "EM2037v2 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:8003": {
+   "model": "EM13x5-LD/HR15-70/HR100-70/HR12/HR1150-70 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:8006": {
+   "model": "EM13x5-LD/HR15-70/HR100-70/HR12/HR1150-70 Barcode scanner engine (USB Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:8010": {
+   "model": "EM13x5-LD/HR15-70/HR100-70/HR12/HR1150-70 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:8203": {
+   "model": "EM3080-01/EM3095/FR20/FM30 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:8206": {
+   "model": "EM3080-01/EM3095/FR20/FM30 Barcode scanner engine (USB Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:8210": {
+   "model": "EM3080-01/EM3095/FR20/FM30 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "1eab:8303": {
+   "model": "HR2160 Barcode scanner engine (HID keyboard)",
+   "category": "scanner"
+  },
+  "1eab:8306": {
+   "model": "HR2160 Barcode scanner engine (Serial CDC)",
+   "category": "scanner"
+  },
+  "1eab:8310": {
+   "model": "HR2160 Barcode scanner engine (HID Pos)",
+   "category": "scanner"
+  },
+  "2730:0fff": {
+   "model": "CT-S2000/4000/310/CLP-521/621/631/CL-S700 Series",
+   "category": "printer"
+  },
+  "2730:1004": {
+   "model": "PPU-700",
+   "category": "printer"
+  },
+  "2730:2002": {
+   "model": "CT-S2000 Thermal Printer (Parallel mode)",
+   "category": "printer"
+  },
+  "2730:200f": {
+   "model": "CT-S310 Label printer",
+   "category": "printer"
+  },
+  "2fe7:0001": {
+   "model": "SMART S@T",
+   "category": "sat",
+   "name": "SAT fiscal Elgin SMART S@T"
+  },
+  "3036:0001": {
+   "model": "Print iD",
+   "category": "printer",
+   "name": "Impressora Control iD Print iD"
+  },
+  "3036:0002": {
+   "model": "iDBio",
+   "category": "biometric",
+   "name": "Leitor biométrico Control iD iDBio"
+  },
+  "3219:0044": {
+   "model": "SKO-44",
+   "category": "keyboard",
+   "name": "Teclado SMAK SKO-44"
+  },
+  "1753:c902": {
+   "category": "pinpad",
+   "model": "PPC930",
+   "name": "Pinpad Gertec PPC930"
+  },
+  "05f9:4005": {
+   "category": "scanner",
+   "model": "PSC",
+   "name": "Scanner fixo Datalogic PSC"
+  },
+  "0fe6:811e": {
+   "category": "printer",
+   "model": "térmica USB",
+   "manufacturer": "Genérica",
+   "name": "Impressora térmica USB (controladora 0fe6:811e, ex.: Elgin i9)"
+  }
+ },
+ "brandWords": {
+  "printer": [
+   "epson",
+   "daruma",
+   "bixolon",
+   "argox",
+   "custom kube",
+   "elgin i9",
+   "elgin i8",
+   "elgin i7",
+   "elgin l42",
+   "bematech mp-4200",
+   "bematech mp-2800",
+   "bematech mp-100",
+   "mp-4200",
+   "tanca tp-",
+   "sweda si-",
+   "control id print",
+   "print id",
+   "gertec g250",
+   "rongta",
+   "xprinter",
+   "hprt",
+   "zebra zd",
+   "zebra gc",
+   "tsc tdp",
+   "tsc ttp",
+   "star tsp"
+  ],
+  "scale": [
+   "toledo",
+   "filizola",
+   "urano",
+   "ramuza",
+   "welmy",
+   "balmak",
+   "elgin dp",
+   "prix 3",
+   "prix 4",
+   "prix 5",
+   "prix fit"
+  ],
+  "pinpad": [
+   "ppc930",
+   "ppc900",
+   "ppc910",
+   "ipp320",
+   "ipp350",
+   "ingenico",
+   "verifone",
+   "lane 3000",
+   "lane 5000",
+   "pax d180",
+   "pax d200"
+  ],
+  "scanner": [
+   "datalogic",
+   "honeywell",
+   "metrologic",
+   "voyager",
+   "newland",
+   "zebra ds",
+   "symbol ls",
+   "elgin flash",
+   "bematech s-",
+   "tanca ts-5",
+   "quickscan",
+   "gryphon",
+   "magellan"
+  ],
+  "sat": [
+   "d-sat",
+   "dsat",
+   "gersat",
+   "linker",
+   "rb-1000",
+   "rb-2000",
+   "ss-1000",
+   "ss-2000",
+   "ts-1000",
+   "tm-1000",
+   "sat id",
+   "easy s@t",
+   "smart s@t",
+   "mfe",
+   "mf-e"
+  ],
+  "biometric": [
+   "nitgen",
+   "hamster",
+   "ud4500",
+   "idbio",
+   "digitalpersona",
+   "futronic",
+   "suprema",
+   "secugen",
+   "u.are.u"
+  ],
+  "keyboard": [
+   "sko-44",
+   "sko44",
+   "tec-e 44",
+   "tec-e44",
+   "tec-55",
+   "smartkey"
+  ],
+  "cash_drawer": [
+   "gaveta",
+   "cash drawer"
+  ]
+ }
+}

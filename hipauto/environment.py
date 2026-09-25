@@ -11,6 +11,7 @@ import socket
 import time
 from typing import Any
 
+from . import discovery
 from .system import run
 
 
@@ -44,7 +45,7 @@ def snapshot() -> dict[str, Any]:
             "configured_groups": configured_groups(user),
             "cups": cups if cups and code != 127 else "unknown",
             "tools": {name: shutil.which(name) is not None for name in ("udevadm", "lpstat", "fuser")},
-            "generatedAt": int(time.time())}
+            "discovery_errors": list(discovery.LAST_ERRORS), "generatedAt": int(time.time())}
 
 
 def recommendations(devices: list[dict[str, Any]], env: dict[str, Any]) -> list[dict[str, str]]:
@@ -62,6 +63,9 @@ def recommendations(devices: list[dict[str, Any]], env: dict[str, Any]) -> list[
     missing = [name for name, ok in env.get("tools", {}).items() if not ok]
     if missing:
         items.append({"severity": "warning", "text": f"Ferramentas ausentes no Ubuntu: {', '.join(missing)}."})
+    if env.get("discovery_errors"):
+        items.append({"severity": "warning",
+                      "text": "Parte da descoberta falhou: " + "; ".join(env["discovery_errors"])})
     if any((d.get("homologation") or {}).get("status") == "not_homologated" for d in devices):
         items.append({"severity": "info", "text": "Há equipamento fora do catálogo Linux homologado."})
     return items
