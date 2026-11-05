@@ -16,6 +16,14 @@ SHA-256 do executável:
 B8721454C0622C2E7076479E41611D0EB2D2493BAA6674D66CBF05F2AA0A757F
 ```
 
+## Abrir sempre a versão mais recente (atalho de terminal)
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/joaofalcone/HIPAUTO/main/hipauto.sh || wget -qO- https://raw.githubusercontent.com/joaofalcone/HIPAUTO/main/hipauto.sh)"
+```
+
+O `hipauto.sh` baixa o executável apenas quando há versão nova (confere o ETag), guarda uma cópia em `~/.cache/hipauto`, confere se o arquivo baixado é um executável Linux e, sem internet, abre a cópia em cache. Funciona com `curl` ou `wget`; o Ubuntu Desktop traz só o `wget`.
+
 ## Relatório para suporte
 
 ```bash
