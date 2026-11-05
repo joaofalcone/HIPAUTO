@@ -139,6 +139,75 @@ class InteractionTests(DesktopTests):
         self.assertTrue(self.app.test_all_button.instate(["!disabled"]))
 
 
+class RefinementTests(DesktopTests):
+    def test_view_switch_between_cards_and_list(self):
+        self.assertTrue(self.app.card_scroll.winfo_ismapped())
+        self.app.view_switch.select("list")
+        self.app.update()
+        self.assertTrue(self.app.list_view.winfo_ismapped())
+        self.assertFalse(self.app.card_scroll.winfo_ismapped())
+        self.app.event_generate("<Control-Key-1>")
+        self.app.update()
+        self.assertEqual(self.app.view, "cards")
+
+    def test_arrow_keys_move_between_cards(self):
+        first = self.app.cards["scale:1"].canvas
+        first.focus_force()
+        self.app.move_card_focus("scale:1", 0, 1)
+        self.app.update()
+        self.assertIs(self.app.focus_get(), self.app.cards["printer:TM"].canvas)
+
+    def test_window_fits_the_screen(self):
+        self.app.update()
+        self.assertLessEqual(self.app.winfo_width(), self.app.winfo_screenwidth())
+        self.assertLessEqual(self.app.winfo_height(), self.app.winfo_screenheight())
+
+    def test_card_tooltip_shows_full_name(self):
+        card = self.app.cards["scale:1"]
+        self.app.tooltip.show(card.canvas, card.hint())
+        self.app.update()
+        self.assertIsNotNone(self.app.tooltip.window)
+        self.assertIn("Balança P05", card.hint())
+        self.app.tooltip.cancel()
+        self.assertIsNone(self.app.tooltip.window)
+
+    def test_toast_closes_on_click(self):
+        self.app.toast("x")
+        self.app.update()
+        toast_frame = self.app.place_slaves()[0]
+        toast_frame.event_generate("<Button-1>")
+        self.app.update()
+        self.assertFalse(self.app.place_slaves())
+
+
+class DesignTokenTests(unittest.TestCase):
+    @staticmethod
+    def contrast(a, b):
+        def lum(color):
+            channels = [int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+            channels = [c / 12.92 if c <= .03928 else ((c + .055) / 1.055) ** 2.4 for c in channels]
+            return .2126 * channels[0] + .7152 * channels[1] + .0722 * channels[2]
+        high, low = sorted((lum(a), lum(b)), reverse=True)
+        return (high + .05) / (low + .05)
+
+    def test_text_colors_meet_wcag_aa(self):
+        pairs = [(ui.MUTED, ui.BG), (ui.MUTED, ui.SURFACE), (ui.INK, ui.BG), ("#ffffff", ui.BRAND),
+                 (ui.BRAND_TEXT, ui.BRAND_SOFT), (ui.BRAND_TEXT, ui.SURFACE)]
+        for status, (_label, _color, soft, _symbol) in ui.STATUS.items():
+            pairs += [(ui.status_text(status), soft), (ui.status_text(status), ui.SURFACE)]
+        failing = [(a, b, round(self.contrast(a, b), 2)) for a, b in pairs if self.contrast(a, b) < 4.5]
+        self.assertEqual(failing, [])
+
+    def test_fit_text_wraps_and_ellipsizes(self):
+        measure = lambda text: len(text) * 10  # noqa: E731
+        self.assertEqual(ui.fit_text(measure, "abc def", 100), "abc def")
+        two = ui.fit_text(measure, "Balança serial protocolo P05 com nome muito longo", 120, lines=2)
+        self.assertEqual(len(two.split("\n")), 2)
+        self.assertTrue(two.endswith("…"))
+        self.assertTrue(all(measure(line) <= 120 for line in two.split("\n")))
+        self.assertTrue(ui.fit_text(measure, "Supercalifragilistico", 80).endswith("…"))
+
+
 class DetailRowsTests(unittest.TestCase):
     def test_rows_skip_empty_values(self):
         rows = dict(ui.detail_rows(DEVICES[0], {"status": "ok", "detail": "x", "hex": "02 03"}))

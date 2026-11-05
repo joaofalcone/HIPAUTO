@@ -29,11 +29,11 @@ STRIPE = "#f6f9fb"
 LINE = "#dbe3ea"
 SHADOW = "#d3dde6"
 INK = "#0f2233"
-MUTED = "#5f7482"
+MUTED = "#526775"
 HEADER = "#0b2536"
 HEADER_END = "#0f3b50"
-BRAND = "#0a8f98"
-BRAND_DARK = "#07717a"
+BRAND = "#087c84"
+BRAND_DARK = "#066a72"
 BRAND_SOFT = "#e0f4f5"
 ACCENT = "#22c3b1"
 GREEN = "#149e6e"
@@ -44,6 +44,14 @@ RED_SOFT = "#fdeced"
 AMBER = "#b86e00"
 AMBER_SOFT = "#fff4e0"
 NEUTRAL_SOFT = "#edf2f5"
+# Cores de texto (contraste mínimo 4,5:1 sobre o fundo suave do próprio estado);
+# as cores vivas acima ficam para bordas, ícones e indicadores gráficos.
+GREEN_TEXT = "#0b7650"
+RED_TEXT = "#b42f3a"
+AMBER_TEXT = "#935600"
+BRAND_TEXT = "#066a72"
+STATUS_TEXT = {"detected": GREEN_TEXT, "ok": GREEN_TEXT, "warning": AMBER_TEXT, "error": RED_TEXT,
+               "testing": BRAND_TEXT}
 
 CATEGORIES = {"pinpad": "Pinpad", "scanner": "Leitor de código", "scale": "Balança",
               "printer": "Impressora", "keyboard": "Teclado", "biometric": "Biometria",
@@ -56,9 +64,10 @@ STATUS = {"detected": ("Conectado", GREEN, GREEN_SOFT, "●"), "ok": ("OK", GREE
 ACTIVE = {"ok", "detected"}
 FILTERS = (("all", "Periféricos", "grid", BRAND), ("active", "Ativos", "check", GREEN),
            ("warning", "Atenção", "warning", AMBER), ("error", "Falhas", "close", RED))
+FILTER_HINTS = {"all": "Mostrar todos os periféricos", "active": "Mostrar só os conectados e OK",
+                "warning": "Mostrar só os que pedem atenção", "error": "Mostrar só as falhas"}
 CARD_HEIGHT = 140
 CARD_MIN_WIDTH = 262
-VISIBLE_CARD_ROWS = 2
 FRAME_MS = 70
 
 
@@ -78,6 +87,36 @@ def status_label(status: str) -> str:
 
 def status_style(status: str) -> tuple[str, str, str, str]:
     return STATUS.get(status, (status_label(status), MUTED, NEUTRAL_SOFT, "•"))
+
+
+def status_text(status: str) -> str:
+    return STATUS_TEXT.get(status, MUTED)
+
+
+def fit_text(measure: Callable[[str], int], text: str, width: float, lines: int = 1) -> str:
+    """Wrap text into at most `lines` lines of `width` pixels, ending with "…" if cut."""
+    words, result, current = str(text or "").split(), [], ""
+    while words:
+        candidate = f"{current} {words[0]}".strip()
+        if measure(candidate) <= width:
+            current, words = candidate, words[1:]
+            continue
+        if not current:  # uma palavra sozinha maior que a linha
+            current, words = words[0], words[1:]
+        result.append(current)
+        current = ""
+        if len(result) == lines:
+            break
+    if current:
+        result.append(current)
+    cut = bool(words) or len(result) > lines
+    result = result[:lines]
+    if result and (cut or measure(result[-1]) > width):
+        last = result[-1]
+        while last and measure(last + "…") > width:
+            last = last[:-1]
+        result[-1] = last.rstrip() + "…"
+    return "\n".join(result)
 
 
 def port_text(device: dict[str, Any]) -> str:
@@ -242,6 +281,120 @@ class FlatButton(tk.Canvas):
         self.create_text(x, self.h / 2 + offset, text=self.text, fill=fg, font=self.font)
 
 
+class Tooltip:
+    """Small delayed hint window; one shared instance per application."""
+
+    def __init__(self, app: "HipautoDesktop"):
+        self.app, self.window, self.job = app, None, None
+
+    def schedule(self, widget: tk.Misc, text_source: Callable[[], str], delay: int = 650) -> None:
+        self.cancel()
+        self.job = self.app.after(delay, lambda: self.show(widget, text_source()))
+
+    def show(self, widget: tk.Misc, text: str) -> None:
+        self.job = None
+        if not text or not widget.winfo_exists() or not widget.winfo_viewable():
+            return
+        self.hide()
+        window = self.window = tk.Toplevel(self.app)
+        window.wm_overrideredirect(True)
+        window.configure(bg=LINE)
+        tk.Label(window, text=text, bg=INK, fg="#ffffff", font=self.app.fonts["small"], justify="left",
+                 wraplength=360, padx=10, pady=6).pack(padx=1, pady=1)
+        x = widget.winfo_pointerx() + 14
+        y = widget.winfo_pointery() + 18
+        window.wm_geometry(f"+{x}+{y}")
+
+    def cancel(self) -> None:
+        if self.job is not None:
+            self.app.after_cancel(self.job)
+            self.job = None
+        self.hide()
+
+    def hide(self) -> None:
+        if self.window is not None and self.window.winfo_exists():
+            self.window.destroy()
+        self.window = None
+
+
+def attach_tooltip(app: "HipautoDesktop", widget: tk.Misc, text_source: Callable[[], str]) -> None:
+    widget.bind("<Enter>", lambda _e: app.tooltip.schedule(widget, text_source), add="+")
+    for sequence in ("<Leave>", "<ButtonPress>", "<KeyPress>"):
+        widget.bind(sequence, lambda _e: app.tooltip.cancel(), add="+")
+
+
+class SegmentedControl(tk.Canvas):
+    """Two or more mutually exclusive options drawn as one rounded control."""
+
+    def __init__(self, app: "HipautoDesktop", master: tk.Misc, options: list[tuple[str, str, str]],
+                 command: Callable[[str], None]):
+        self.app, self.options, self.command = app, options, command
+        self.value = options[0][0]
+        self.widths = [app.measure("button", label) + 46 for _key, label, _glyph in options]
+        super().__init__(master, width=sum(self.widths) + 8, height=42, bg=BG, highlightthickness=0,
+                         cursor="hand2", takefocus=1)
+        self.hover: str | None = None
+        self.bind("<Button-1>", self._click)
+        self.bind("<Motion>", self._motion)
+        self.bind("<Leave>", lambda _e: self._set_hover(None))
+        self.bind("<Left>", lambda _e: self._step(-1))
+        self.bind("<Right>", lambda _e: self._step(1))
+        self.bind("<FocusIn>", lambda _e: self.draw())
+        self.bind("<FocusOut>", lambda _e: self.draw())
+        self.draw()
+
+    def _key_at(self, x: float) -> str | None:
+        left = 4
+        for (key, _label, _glyph), width in zip(self.options, self.widths):
+            if left <= x <= left + width:
+                return key
+            left += width
+        return None
+
+    def _set_hover(self, key: str | None) -> None:
+        if key != self.hover:
+            self.hover = key
+            self.draw()
+
+    def _motion(self, event: tk.Event) -> None:
+        self._set_hover(self._key_at(event.x))
+
+    def _click(self, event: tk.Event) -> None:
+        key = self._key_at(event.x)
+        if key:
+            self.select(key)
+
+    def _step(self, delta: int) -> None:
+        keys = [key for key, _label, _glyph in self.options]
+        self.select(keys[(keys.index(self.value) + delta) % len(keys)])
+
+    def select(self, key: str) -> None:
+        if key != self.value:
+            self.value = key
+            self.draw()
+            self.command(key)
+
+    def draw(self) -> None:
+        self.delete("all")
+        fonts = self.app.fonts
+        try:
+            focused = self.focus_get() is self
+        except (KeyError, tk.TclError):
+            focused = False
+        total = sum(self.widths) + 8
+        rounded_rect(self, 1, 1, total - 1, 41, 12, fill="", outline=ACCENT if focused else BG, width=2)
+        rounded_rect(self, 3, 3, total - 3, 39, 10, fill="#e3eaf0", outline="")
+        left = 4
+        for (key, label, glyph), width in zip(self.options, self.widths):
+            selected = key == self.value
+            if selected:
+                rounded_rect(self, left + 1, 6, left + width - 1, 36, 8, fill=SURFACE, outline=LINE)
+            color = INK if selected else (BRAND_TEXT if key == self.hover else MUTED)
+            draw_glyph(self, glyph, color, left + 20, 21, .8)
+            self.create_text(left + 34, 21, anchor="w", text=label, fill=color, font=fonts["button"])
+            left += width
+
+
 class ProgressLine(tk.Canvas):
     """3px progress indicator: determinate (fraction) or indeterminate (sliding)."""
 
@@ -325,12 +478,17 @@ class KpiTile(tk.Canvas):
     def __init__(self, app: "HipautoDesktop", master: tk.Misc, key: str, label: str, glyph: str, color: str):
         super().__init__(master, height=76, bg=BG, highlightthickness=0, cursor="hand2", takefocus=1)
         self.app, self.key, self.label, self.glyph, self.color = app, key, label, glyph, color
+        self.compact = False
         self.value, self.selected, self.hover = 0, key == "all", False
         self.bind("<Configure>", lambda _e: self.draw())
         self.bind("<Enter>", lambda _e: self._hover(True))
         self.bind("<Leave>", lambda _e: self._hover(False))
         for sequence in ("<Button-1>", "<Return>", "<space>"):
             self.bind(sequence, lambda _e: app.set_filter(key))
+        self.bind("<FocusIn>", lambda _e: self.draw())
+        self.bind("<FocusOut>", lambda _e: self.draw())
+        attach_tooltip(app, self, lambda: FILTER_HINTS[key] + (" (ativo; clique de novo para limpar)"
+                                                               if self.selected and key != "all" else ""))
 
     def _hover(self, value: bool) -> None:
         self.hover = value
@@ -340,19 +498,43 @@ class KpiTile(tk.Canvas):
         self.value, self.selected = value, selected
         self.draw()
 
+    def set_compact(self, compact: bool) -> None:
+        if compact != self.compact:
+            self.compact = compact
+            self.configure(height=56 if compact else 76)
+            self.draw()
+
     def draw(self) -> None:
         self.delete("all")
         width = max(self.winfo_width(), 160)
         fonts = self.app.fonts
         border = self.color if self.selected else (mix(LINE, self.color, .35) if self.hover else LINE)
         fill = mix(SURFACE, self.color, .06) if self.selected else SURFACE
-        rounded_rect(self, 2, 2, width - 2, 74, 14, fill=fill, outline=border, width=2 if self.selected else 1)
-        self.create_oval(18, 18, 58, 58, fill=mix(SURFACE, self.color, .14), outline="")
-        draw_glyph(self, self.glyph, self.color, 38, 38, 1.1)
-        self.create_text(74, 30, anchor="w", text=str(self.value), fill=INK, font=fonts["kpi"])
-        self.create_text(74, 54, anchor="w", text=self.label.upper(), fill=MUTED, font=fonts["tag"])
+        height = 56 if self.compact else 76
+        try:
+            focused = self.focus_get() is self
+        except (KeyError, tk.TclError):
+            focused = False
+        if focused:
+            rounded_rect(self, 0, 0, width, height, 16, fill="", outline=ACCENT, width=2)
+        rounded_rect(self, 2, 2, width - 2, height - 2, 14, fill=fill, outline=border, width=2 if self.selected else 1)
+        middle, radius = height / 2, (14 if self.compact else 20)
+        self.create_oval(18, middle - radius, 18 + 2 * radius, middle + radius, fill=mix(SURFACE, self.color, .14),
+                         outline="")
+        draw_glyph(self, self.glyph, self.color, 18 + radius, middle, .9 if self.compact else 1.1)
+        text_x = 30 + 2 * radius
+        if self.compact:
+            value = self.create_text(text_x, middle, anchor="w", text=str(self.value), fill=INK,
+                                     font=fonts["heading"])
+            self.create_text(self.bbox(value)[2] + 10, middle + 1, anchor="w", text=self.label.upper(),
+                             fill=MUTED, font=fonts["tag"])
+        else:
+            self.create_text(text_x, 30, anchor="w", text=str(self.value), fill=INK, font=fonts["kpi"])
+            self.create_text(text_x, 54, anchor="w", text=self.label.upper(), fill=MUTED, font=fonts["tag"])
         if self.selected and self.key != "all":
-            self.create_text(width - 16, 20, anchor="e", text="FILTRO ATIVO", fill=self.color, font=fonts["tag"])
+            text_color = {GREEN: GREEN_TEXT, AMBER: AMBER_TEXT, RED: RED_TEXT}.get(self.color, BRAND_TEXT)
+            self.create_text(width - 16, 16 if self.compact else 20, anchor="e", text="FILTRO ATIVO", fill=text_color,
+                             font=fonts["tag"])
 
 
 class DeviceCard:
@@ -372,6 +554,17 @@ class DeviceCard:
             self.canvas.bind(sequence, lambda _e, v=value: self._hover(v))
         self.canvas.bind("<FocusIn>", lambda _e: self.draw())
         self.canvas.bind("<FocusOut>", lambda _e: self.draw())
+        for sequence, delta in (("<Left>", (0, -1)), ("<Right>", (0, 1)), ("<Up>", (-1, 0)), ("<Down>", (1, 0))):
+            self.canvas.bind(sequence, lambda _e, d=delta: self.app.move_card_focus(self.device["id"], *d))
+        attach_tooltip(app, self.canvas, self.hint)
+
+    def hint(self) -> str:
+        result = self.result or {}
+        lines = [self.device.get("name") or "Equipamento", port_text(self.device)]
+        detail = result.get("detail") or self.device.get("detail")
+        if detail:
+            lines.append(f"{status_label(self.status)} · {detail}")
+        return "\n".join(lines)
 
     @property
     def status(self) -> str:
@@ -416,23 +609,28 @@ class DeviceCard:
         if status == "testing":
             self.spinner = canvas.create_arc(14, 16 + top, 68, 70 + top, start=0, extent=80, style="arc",
                                              outline=BRAND, width=3)
+        measure = self.app.measure
+        text_color = MUTED if status == "testing" else status_text(status)
         pill_text = f"{symbol} {label}"
-        pill_width = self.app.measure("tag_big", pill_text) + 20
+        pill_width = measure("tag_big", pill_text) + 20
         rounded_rect(canvas, width - 18 - pill_width, 16 + top, width - 18, 38 + top, 11, fill=soft, outline="")
-        canvas.create_text(width - 18 - pill_width / 2, 27 + top, text=pill_text, fill=color, font=fonts["tag_big"])
-        canvas.create_text(78, 27 + top, anchor="w", fill=icon_color, font=fonts["tag"], width=width - 110 - pill_width,
-                           text=CATEGORIES.get(self.device.get("category"), "Outro").upper())
-        canvas.create_text(78, 54 + top, anchor="w", width=width - 100, fill=INK, font=fonts["card"],
-                           text=self.device.get("name") or "Equipamento sem nome")
+        canvas.create_text(width - 18 - pill_width / 2, 27 + top, text=pill_text, fill=status_text(status),
+                           font=fonts["tag_big"])
+        category = CATEGORIES.get(self.device.get("category"), "Outro").upper()
+        canvas.create_text(78, 27 + top, anchor="w", fill=text_color, font=fonts["tag"],
+                           text=fit_text(lambda t: measure("tag", t), category, width - 110 - pill_width))
+        name = fit_text(lambda t: measure("card", t), self.device.get("name") or "Equipamento sem nome",
+                        width - 100, lines=2)
+        canvas.create_text(78, 54 + top, anchor="w", fill=INK, font=fonts["card"], text=name)
         sub = subtitle(self.device)
         if sub:
-            canvas.create_text(78, 80 + top, anchor="w", width=width - 100, fill=MUTED, font=fonts["small"],
-                               text=sub)
+            canvas.create_text(78, 80 + top, anchor="w", fill=MUTED, font=fonts["small"],
+                               text=fit_text(lambda t: measure("small", t), sub, width - 100))
         canvas.create_line(18, 96 + top, width - 22, 96 + top, fill=LINE)
         draw_connection(canvas, connection_kind(self.device.get("connection")), MUTED, 28, 116 + top)
         weight = (self.result or {}).get("weight") or self.device.get("weight")
-        canvas.create_text(42, 116 + top, anchor="w", width=width - 150, fill=MUTED, font=fonts["small"],
-                           text=port_text(self.device))
+        canvas.create_text(42, 116 + top, anchor="w", fill=MUTED, font=fonts["small"],
+                           text=fit_text(lambda t: measure("small", t), port_text(self.device), width - 160))
         if weight:
             chip = f"⚖ {weight}"
             chip_width = self.app.measure("tag_big", chip) + 18
@@ -441,7 +639,7 @@ class DeviceCard:
             canvas.create_text(width - 22 - chip_width / 2, 116 + top, text=chip, fill=BRAND_DARK,
                                font=fonts["tag_big"])
         elif self.hover or focused:
-            canvas.create_text(width - 22, 116 + top, anchor="e", text="Detalhes  ›", fill=BRAND,
+            canvas.create_text(width - 22, 116 + top, anchor="e", text="Detalhes  ›", fill=BRAND_TEXT,
                                font=fonts["tag_big"])
 
     def animate(self, phase: float) -> None:
@@ -467,6 +665,9 @@ class Toast:
         self.label = tk.Label(self.frame, text=text, bg=SURFACE, fg=INK, font=app.fonts["body"], justify="left",
                               wraplength=320)
         self.label.pack(side="left", padx=(10, 16), pady=10)
+        for widget in (self.frame, icon, self.label):
+            widget.bind("<Button-1>", lambda _e: self.close())
+            widget.configure(cursor="hand2")
         self.offset = 40
         self._slide()
         app.after(4200, self.close)
@@ -491,8 +692,13 @@ class DetailWindow(tk.Toplevel):
         super().__init__(app)
         self.app, self.device_id = app, device_id
         self.title("Detalhes do periférico")
-        self.geometry("720x680")
-        self.minsize(600, 520)
+        width = min(720, app.winfo_width() - 40) if app.winfo_width() > 700 else 720
+        height = min(680, max(520, app.winfo_height() - 60))
+        x = app.winfo_rootx() + max(0, (app.winfo_width() - width) // 2)
+        y = app.winfo_rooty() + max(0, (app.winfo_height() - height) // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.minsize(560, 460)
+        self.wrap = 440
         self.configure(bg=BG)
         self.transient(app)
         self.hero = tk.Canvas(self, height=118, bg=HEADER, highlightthickness=0)
@@ -509,6 +715,7 @@ class DetailWindow(tk.Toplevel):
         holder.pack(fill="both", expand=True, padx=18, pady=16)
         self.body = ScrollFrame(holder, bg=SURFACE)
         self.body.pack(fill="both", expand=True, padx=2, pady=2)
+        self.body.canvas.bind("<Configure>", self._rewrap, add="+")
         self.bind("<Escape>", lambda _e: self.destroy())
         self.refresh()
         self.after_idle(self._grab)
@@ -527,12 +734,20 @@ class DetailWindow(tk.Toplevel):
         except tk.TclError:
             pass  # janela fechada antes de aparecer
 
+    def _rewrap(self, event: tk.Event) -> None:
+        wrap = max(220, event.width - 210)
+        if abs(wrap - self.wrap) < 8:
+            return
+        self.wrap = wrap
+        for child in self.body.inner.grid_slaves(column=1):
+            child.configure(wraplength=wrap)
+
     def _draw_hero(self) -> None:
         device = self.app.device_by_id(self.device_id)
         if device is None:
             return
         canvas, fonts = self.hero, self.app.fonts
-        width = max(canvas.winfo_width(), 600)
+        width = max(canvas.winfo_width(), 400)
         canvas.delete("all")
         draw_wallpaper(canvas, width, 118, HEADER, HEADER_END, "#153a4d", "#1d5266", ACCENT, seed=3)
         status = current_status(device, self.app.results.get(self.device_id))
@@ -541,14 +756,16 @@ class DetailWindow(tk.Toplevel):
         draw_icon(canvas, device.get("category", "unknown"), "#e8fbf7", 57, 59, HEADER)
         canvas.create_text(108, 34, anchor="w", text=CATEGORIES.get(device.get("category"), "Periférico").upper(),
                            fill=GREEN_GLOW, font=fonts["tag"])
-        canvas.create_text(108, 60, anchor="w", width=width - 260, text=device.get("name") or "Equipamento",
-                           fill="#ffffff", font=fonts["heading"])
-        canvas.create_text(108, 88, anchor="w", width=width - 260, text=subtitle(device), fill="#b9ceda",
-                           font=fonts["small"])
+        measure = self.app.measure
+        canvas.create_text(108, 60, anchor="w", fill="#ffffff", font=fonts["heading"],
+                           text=fit_text(lambda t: measure("heading", t), device.get("name") or "Equipamento",
+                                         width - 270))
+        canvas.create_text(108, 88, anchor="w", fill="#b9ceda", font=fonts["small"],
+                           text=fit_text(lambda t: measure("small", t), subtitle(device), width - 270))
         pill = f"{symbol} {label}"
         pill_width = self.app.measure("tag_big", pill) + 24
         rounded_rect(canvas, width - 24 - pill_width, 22, width - 24, 48, 13, fill=soft, outline="")
-        canvas.create_text(width - 24 - pill_width / 2, 35, text=pill, fill=color, font=fonts["tag_big"])
+        canvas.create_text(width - 24 - pill_width / 2, 35, text=pill, fill=status_text(status), font=fonts["tag_big"])
 
     def refresh(self) -> None:
         device = self.app.device_by_id(self.device_id)
@@ -564,7 +781,7 @@ class DetailWindow(tk.Toplevel):
         fonts = self.app.fonts
         row = 0
         for title, rows in detail_sections(device, result):
-            tk.Label(inner, text=title.upper(), bg=SURFACE, fg=BRAND, font=fonts["tag"], anchor="w",
+            tk.Label(inner, text=title.upper(), bg=SURFACE, fg=BRAND_TEXT, font=fonts["tag"], anchor="w",
                      padx=12, pady=8).grid(row=row, column=0, columnspan=2, sticky="ew", pady=(8 if row else 0, 0))
             row += 1
             for index, (label, value) in enumerate(rows):
@@ -572,7 +789,7 @@ class DetailWindow(tk.Toplevel):
                 tk.Label(inner, text=label, bg=bg, fg=MUTED, font=fonts["label"], anchor="nw", padx=12,
                          pady=7).grid(row=row, column=0, sticky="nsew")
                 tk.Label(inner, text=value, bg=bg, fg=INK, font=fonts["body"], anchor="w", justify="left",
-                         wraplength=440, padx=12, pady=7).grid(row=row, column=1, sticky="nsew")
+                         wraplength=self.wrap, padx=12, pady=7).grid(row=row, column=1, sticky="nsew")
                 row += 1
         inner.grid_columnconfigure(0, weight=1, minsize=160)
         inner.grid_columnconfigure(1, weight=3)
@@ -595,8 +812,15 @@ class HipautoDesktop(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("HIPAUTO · Diagnóstico do PDV")
-        self.geometry("1240x840")
-        self.minsize(960, 680)
+        screen_w, screen_h = self.winfo_screenwidth(), self.winfo_screenheight()
+        width, height = min(1240, screen_w - 40), min(840, screen_h - 80)
+        self.geometry(f"{width}x{height}+{max(0, (screen_w - width) // 2)}+{max(0, (screen_h - height) // 3)}")
+        self.minsize(min(900, width), min(600, height))
+        if screen_w <= 1366 and screen_h <= 768:
+            try:
+                self.attributes("-zoomed", True)  # telas típicas de PDV: aproveita a tela toda
+            except tk.TclError:
+                pass
         self.configure(bg=BG)
         self.devices: list[dict[str, Any]] = []
         self.results: dict[str, dict[str, Any]] = {}
@@ -606,6 +830,8 @@ class HipautoDesktop(tk.Tk):
         self.tiles: dict[str, KpiTile] = {}
         self.details: DetailWindow | None = None
         self.filter = "all"
+        self.view = "cards"
+        self.compact = False
         self.busy = False
         self._columns = 0
         self._phase = 0.0
@@ -623,12 +849,16 @@ class HipautoDesktop(tk.Tk):
                       "tag_big": (family, 9, "bold")}
         self.measure = lru_cache(maxsize=1024)(
             lambda key, text: tkfont.Font(root=self, font=self.fonts[key]).measure(text))
+        self.tooltip = Tooltip(self)
         self._style(family)
         self._build()
         self.protocol("WM_DELETE_WINDOW", self.close)
+        self.bind("<Configure>", self._on_resize, add="+")
         self.bind("<F5>", lambda _e: self.refresh_devices())
         self.bind("<Control-t>", lambda _e: self.test_all())
         self.bind("<Escape>", lambda _e: self.set_filter("all") if self.filter != "all" else None)
+        self.bind("<Control-Key-1>", lambda _e: self.view_switch.select("cards"))
+        self.bind("<Control-Key-2>", lambda _e: self.view_switch.select("list"))
         self.after(60, self._drain_events)
         self.after(150, self.refresh_devices)
         self.after(FRAME_MS, self._animate)
@@ -644,6 +874,8 @@ class HipautoDesktop(tk.Tk):
                         foreground=MUTED, relief="flat", borderwidth=0)
         style.map("Treeview.Heading", background=[("active", "#dfe8ee")])
         style.map("Treeview", background=[("selected", "#d4eef0")], foreground=[("selected", INK)])
+        style.configure("Treeview", rowheight=38, bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE)
+        style.layout("Treeview", [("Treeview.treearea", {"sticky": "nswe"})])  # sem moldura de foco preta
         style.configure("Vertical.TScrollbar", background="#dfe7ec", troughcolor=BG, borderwidth=0,
                         arrowsize=12, gripcount=0)
 
@@ -659,32 +891,42 @@ class HipautoDesktop(tk.Tk):
         self.version_label = tk.Label(footer, text=f"v{__version__}", bg="#dfe7ec", fg="#41515c",
                                       font=fonts["tag"], padx=6, pady=3)
         self.version_label.pack(side="left")
-        hint = tk.Frame(footer, bg=BG)
+        hint = self.footer_hint = tk.Frame(footer, bg=BG)
         hint.pack(side="left", padx=12)
-        for key, text in (("F5", "atualiza"), ("Ctrl+T", "testa todos"), ("Enter", "abre detalhes"),
-                          ("Esc", "limpa filtro")):
+        for key, text in (("F5", "atualiza"), ("Ctrl+T", "testa todos"), ("Ctrl+1/2", "cards ou lista"),
+                          ("Setas", "navegam"), ("Esc", "limpa filtro")):
             tk.Label(hint, text=key, bg=SURFACE, fg=INK, font=fonts["tag"], padx=5, pady=1, relief="solid",
                      borderwidth=1).pack(side="left", padx=(0, 4))
             tk.Label(hint, text=text, bg=BG, fg=MUTED, font=fonts["small"]).pack(side="left", padx=(0, 12))
 
-        kpis = tk.Frame(self, bg=BG, padx=21)
+        kpis = self.kpis = tk.Frame(self, bg=BG, padx=21)
         kpis.pack(fill="x", pady=(16, 0))
         for column, (key, label, glyph, color) in enumerate(FILTERS):
             tile = self.tiles[key] = KpiTile(self, kpis, key, label, glyph, color)
             tile.grid(row=0, column=column, sticky="ew", padx=5)
             kpis.grid_columnconfigure(column, weight=1, uniform="kpi")
 
-        toolbar = tk.Frame(self, bg=BG, padx=26)
+        toolbar = self.toolbar = tk.Frame(self, bg=BG, padx=26)
         toolbar.pack(fill="x", pady=(16, 8))
-        title = tk.Frame(toolbar, bg=BG)
-        title.pack(side="left")
-        tk.Label(title, text="Periféricos", bg=BG, fg=INK, font=fonts["heading"]).pack(anchor="w")
-        tk.Label(title, textvariable=self.status_var, bg=BG, fg=MUTED, font=fonts["small"]).pack(anchor="w")
         self.test_all_button = FlatButton(toolbar, "Testar todos", self.test_all, "play", "primary", fonts["button"])
         self.test_all_button.pack(side="right")
         self.refresh_button = FlatButton(toolbar, "Atualizar", self.refresh_devices, "refresh", "secondary",
                                          fonts["button"])
         self.refresh_button.pack(side="right", padx=(0, 8))
+        self.view_switch = SegmentedControl(self, toolbar, [("cards", "Cards", "grid"), ("list", "Lista", "pulse")],
+                                            self.set_view)
+        self.view_switch.pack(side="right", padx=(0, 16))
+        # Título e status entram por último: em telas estreitas eles cedem espaço aos controles.
+        title = tk.Frame(toolbar, bg=BG)
+        title.pack(side="left", fill="x", expand=True)
+        tk.Label(title, text="Periféricos", bg=BG, fg=INK, font=fonts["heading"], anchor="w").pack(fill="x")
+        self.status_label = tk.Label(title, textvariable=self.status_var, bg=BG, fg=MUTED, font=fonts["small"],
+                                     anchor="w", justify="left")
+        self.status_label.pack(fill="x")
+        title.bind("<Configure>", lambda e: self.status_label.configure(wraplength=max(120, e.width)))
+        attach_tooltip(self, self.refresh_button, lambda: "Procurar periféricos de novo (F5)")
+        attach_tooltip(self, self.test_all_button, lambda: "Testar a comunicação de todos (Ctrl+T)")
+        attach_tooltip(self, self.view_switch, lambda: "Alternar entre cards e lista (Ctrl+1 / Ctrl+2)")
         self.progress = ProgressLine(self)
         self.progress.pack(fill="x", padx=26, pady=(0, 10))
 
@@ -698,8 +940,10 @@ class HipautoDesktop(tk.Tk):
         self.notice_label.pack(side="left", fill="x", expand=True)
         self.notice_bar.bind("<Configure>", lambda e: self.notice_label.configure(wraplength=max(200, e.width - 60)))
 
-        self.card_scroll = ScrollFrame(self, bg=BG, fixed_height=True, padx=21)
-        self.card_scroll.pack(fill="x")
+        self.content = tk.Frame(self, bg=BG)
+        self.content.pack(fill="both", expand=True, pady=(0, 4))
+        self.card_scroll = ScrollFrame(self.content, bg=BG, padx=21)
+        self.card_scroll.pack(fill="both", expand=True)
         self.card_area = self.card_scroll.inner
         self.card_scroll.canvas.bind("<Configure>", self._layout_cards, add="+")
         self.empty_state = tk.Frame(self.card_area, bg=BG)
@@ -710,8 +954,7 @@ class HipautoDesktop(tk.Tk):
                                     text="Procurando periféricos…")
         self.empty_label.pack(pady=(0, 18))
 
-        section = tk.Frame(self, bg=BG, padx=26)
-        section.pack(fill="both", expand=True, pady=(12, 0))
+        section = self.list_view = tk.Frame(self.content, bg=BG, padx=26)
         bar = tk.Frame(section, bg=SURFACE, padx=18, pady=11, highlightthickness=1, highlightbackground=LINE)
         bar.pack(fill="x")
         pulse = tk.Canvas(bar, width=22, height=20, bg=SURFACE, highlightthickness=0)
@@ -719,14 +962,14 @@ class HipautoDesktop(tk.Tk):
         draw_glyph(pulse, "pulse", BRAND, 11, 10, .9)
         tk.Label(bar, text="Resumo dos testes", bg=SURFACE, fg=INK, font=fonts["section"]).pack(side="left")
         tk.Label(bar, textvariable=self.summary_var, bg=SURFACE, fg=MUTED, font=fonts["small"]).pack(side="right")
-        table = tk.Frame(section, bg=SURFACE, highlightthickness=1, highlightbackground=LINE)
+        table = tk.Frame(section, bg=SURFACE, highlightthickness=1, highlightbackground=LINE, highlightcolor=LINE)
         table.pack(fill="both", expand=True)
         self.tree = ttk.Treeview(table, columns=("device", "port", "test"), show="headings", selectmode="browse")
         for key, label, width in (("device", "PERIFÉRICO", 340), ("port", "PORTA", 220), ("test", "RESULTADO", 480)):
             self.tree.heading(key, text=label, anchor="w")
             self.tree.column(key, width=width, minwidth=120, stretch=True, anchor="w")
-        for status, (_label, color, _soft, _symbol) in STATUS.items():
-            self.tree.tag_configure(status, foreground=INK if status == "detected" else color)
+        for status in STATUS:
+            self.tree.tag_configure(status, foreground=INK if status == "detected" else status_text(status))
         self.tree.tag_configure("stripe", background=STRIPE)
         scroll = ttk.Scrollbar(table, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scroll.set)
@@ -734,29 +977,63 @@ class HipautoDesktop(tk.Tk):
         scroll.pack(side="right", fill="y")
         for sequence in ("<Double-1>", "<Return>"):
             self.tree.bind(sequence, lambda _e: self._open_selected())
+        self._tree_widths: tuple[int, ...] = ()
+        self.tree.bind("<Configure>", lambda _e: self.after_idle(self._rewrap_table), add="+")
+        self.tree.bind("<ButtonRelease-1>", lambda _e: self.after_idle(self._rewrap_table), add="+")
 
     def _draw_hero(self) -> None:
         canvas, fonts = self.hero, self.fonts
-        width = max(canvas.winfo_width(), 900)
+        width, height = max(canvas.winfo_width(), 320), (76 if self.compact else 128)
+        middle = height / 2
         canvas.delete("all")
-        draw_wallpaper(canvas, width, 128, HEADER, HEADER_END, "#12384b", "#1b4f63", ACCENT)
-        rounded_rect(canvas, 28, 36, 84, 92, 16, fill=ACCENT, outline="")
-        canvas.create_text(56, 64, text="H", fill="#ffffff", font=fonts["brand"])
-        canvas.create_text(104, 52, anchor="w", text="Diagnóstico do PDV", fill="#ffffff", font=fonts["title"])
-        canvas.create_text(104, 82, anchor="w", text="Identificação e teste dos periféricos deste computador",
-                           fill="#b9ceda", font=fonts["small"])
+        draw_wallpaper(canvas, width, height, HEADER, HEADER_END, "#12384b", "#1b4f63", ACCENT)
+        size = 40 if self.compact else 56
+        rounded_rect(canvas, 28, middle - size / 2, 28 + size, middle + size / 2, 12 if self.compact else 16,
+                     fill=ACCENT, outline="")
+        canvas.create_text(28 + size / 2, middle, text="H", fill="#ffffff",
+                           font=fonts["heading"] if self.compact else fonts["brand"])
+        title_x = 28 + size + 20
+        if self.compact:
+            canvas.create_text(title_x, middle, anchor="w", text="Diagnóstico do PDV", fill="#ffffff",
+                               font=fonts["heading"])
+        else:
+            canvas.create_text(title_x, 52, anchor="w", text="Diagnóstico do PDV", fill="#ffffff", font=fonts["title"])
+            canvas.create_text(title_x, 82, anchor="w", text="Identificação e teste dos periféricos deste computador",
+                               fill="#b9ceda", font=fonts["small"])
         x = width - 28
-        for text, glyph, color in (("OPERAÇÃO LOCAL", None, GREEN_GLOW), (self.host, "host", "#d7e6ee")):
-            label = canvas.create_text(x - 16, 63, anchor="e", text=text, fill=color, font=fonts["tag_big"])
+        chips = [("OPERAÇÃO LOCAL", None, GREEN_GLOW), (self.host, "host", "#d7e6ee")]
+        title_end = title_x + self.measure("heading" if self.compact else "title", "Diagnóstico do PDV") + 24
+        for text, glyph, color in chips:
+            if x - self.measure("tag_big", text) - 46 < title_end:
+                break  # sem espaço: o chip some em vez de cobrir o título
+            label = canvas.create_text(x - 16, middle - 1, anchor="e", text=text, fill=color, font=fonts["tag_big"])
             left = canvas.bbox(label)[0] - 30
-            chip = rounded_rect(canvas, left, 48, x, 78, 15, fill=mix(HEADER, "#ffffff", .08),
+            chip = rounded_rect(canvas, left, middle - 16, x, middle + 14, 15, fill=mix(HEADER, "#ffffff", .08),
                                 outline=mix(HEADER, "#ffffff", .18))
             canvas.tag_lower(chip, label)
             if glyph:
-                draw_glyph(canvas, glyph, color, left + 17, 63, .9)
+                draw_glyph(canvas, glyph, color, left + 17, middle - 1, .9)
             else:
-                canvas.create_oval(left + 12, 59, left + 20, 67, fill=color, outline="")
+                canvas.create_oval(left + 12, middle - 5, left + 20, middle + 3, fill=color, outline="")
             x = left - 10
+
+    def _on_resize(self, event: tk.Event) -> None:
+        if event.widget is not self:
+            return
+        compact = event.height < 720
+        if compact == self.compact:
+            return
+        self.compact = compact
+        self.hero.configure(height=76 if compact else 128)
+        for tile in self.tiles.values():
+            tile.set_compact(compact)
+        self.kpis.pack_configure(pady=(10 if compact else 16, 0))
+        self.toolbar.pack_configure(pady=(10 if compact else 16, 6 if compact else 8))
+        if compact:
+            self.footer_hint.pack_forget()
+        else:
+            self.footer_hint.pack(side="left", padx=12)
+        self._draw_hero()
 
     # --------------------------------------------------------------- threading
     def _post(self, callback: Callable[..., None], *args: Any) -> None:
@@ -826,6 +1103,38 @@ class HipautoDesktop(tk.Tk):
 
     def visible_devices(self) -> list[dict[str, Any]]:
         return [d for d in self.devices if matches_filter(current_status(d, self.results.get(d["id"])), self.filter)]
+
+    def set_view(self, view: str) -> None:
+        self.view = view
+        if view == "list":
+            self.card_scroll.pack_forget()
+            self.list_view.pack(fill="both", expand=True)
+            self.tree.focus_set()
+        else:
+            self.list_view.pack_forget()
+            self.card_scroll.pack(fill="both", expand=True)
+        self.view_switch.value = view
+        self.view_switch.draw()
+
+    def move_card_focus(self, device_id: str, rows: int, columns: int) -> None:
+        ids = [d["id"] for d in self.visible_devices()]
+        if device_id not in ids or not self._columns:
+            return
+        index = ids.index(device_id) + rows * self._columns + columns
+        if 0 <= index < len(ids):
+            card = self.cards[ids[index]]
+            card.canvas.focus_set()
+            self._scroll_into_view(card.canvas)
+
+    def _scroll_into_view(self, widget: tk.Misc) -> None:
+        canvas = self.card_scroll.canvas
+        total = max(1, self.card_area.winfo_height())
+        top, bottom = widget.winfo_y(), widget.winfo_y() + widget.winfo_height()
+        view_top = canvas.canvasy(0)
+        if top < view_top:
+            canvas.yview_moveto(top / total)
+        elif bottom > view_top + canvas.winfo_height():
+            canvas.yview_moveto((bottom - canvas.winfo_height()) / total)
 
     def set_filter(self, name: str) -> None:
         self.filter = "all" if name == self.filter else name
@@ -938,7 +1247,7 @@ class HipautoDesktop(tk.Tk):
         if self.notices:
             self.notice_var.set("\n".join(item["text"] for item in self.notices))
             if not self.notice_bar.winfo_ismapped():
-                self.notice_bar.pack(fill="x", padx=26, pady=(0, 10), before=self.card_scroll)
+                self.notice_bar.pack(fill="x", padx=26, pady=(0, 10), before=self.content)
         else:
             self.notice_bar.pack_forget()
 
@@ -980,9 +1289,14 @@ class HipautoDesktop(tk.Tk):
         for index, device in enumerate(visible):
             self.cards[device["id"]].canvas.grid(row=index // columns, column=index % columns,
                                                  sticky="nsew", padx=5, pady=5)
-        rows = max(1, min(VISIBLE_CARD_ROWS, -(-len(visible) // columns))) if visible else 1
-        self.card_scroll.canvas.configure(height=rows * (CARD_HEIGHT + 10) + 2 if visible else 150)
         self.card_scroll.after_idle(self.card_scroll._sync)
+
+    def _rewrap_table(self) -> None:
+        """Re-fit cell texts when the columns change width (window resize or drag)."""
+        widths = tuple(self.tree.column(key, "width") for key in ("device", "port", "test"))
+        if widths != self._tree_widths:
+            self._tree_widths = widths
+            self._render_table()
 
     def _render_table(self) -> None:
         selected = self.tree.selection()
@@ -996,9 +1310,11 @@ class HipautoDesktop(tk.Tk):
             if weight:
                 detail = f"{detail} · {weight}"
             tags = (status, "stripe") if row % 2 else (status,)
-            self.tree.insert("", "end", iid=device["id"], tags=tags, values=(
-                device.get("name") or CATEGORIES.get(device.get("category"), "Outro"),
-                port_text(device), f"{symbol}  {label} · {detail}"))
+            values = (device.get("name") or CATEGORIES.get(device.get("category"), "Outro"), port_text(device),
+                      f"{symbol}  {label} · {detail}")
+            self.tree.insert("", "end", iid=device["id"], tags=tags, values=tuple(
+                fit_text(lambda t: self.measure("body", t), value, max(60, self.tree.column(key, "width") - 24))
+                for key, value in zip(("device", "port", "test"), values)))
         if selected and self.tree.exists(selected[0]):
             self.tree.selection_set(selected[0])
         tested = [r for r in self.results.values() if r.get("status") not in (None, "testing")]
@@ -1017,7 +1333,8 @@ class HipautoDesktop(tk.Tk):
         if not self._alive:
             return
         self._phase += FRAME_MS / 1000
-        for card in self.cards.values():
-            card.animate(self._phase)
-        self.progress.tick(self._phase)
+        if self.state() != "iconic":  # minimizado: não gasta CPU com animação
+            for card in self.cards.values():
+                card.animate(self._phase)
+            self.progress.tick(self._phase)
         self.after(FRAME_MS, self._animate)

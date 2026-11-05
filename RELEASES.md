@@ -1,5 +1,20 @@
 # Histórico de versões
 
+## 26.0
+
+Revisão e refinamento do front.
+
+- A janela se ajusta à tela do PDV (1024×768, 1366×768) em vez de abrir com 1240×840, maior que a tela.
+- Modo compacto automático para janelas baixas, como as de 800×600: cabeçalho e indicadores mais baixos e rodapé sem a lista de atalhos.
+- Nova alternância Cards | Lista (Ctrl+1 / Ctrl+2). A vista escolhida ocupa toda a área, em vez de dividir espaço com a outra.
+- Contraste de acessibilidade (WCAG AA, mínimo 4,5:1) em todos os textos de status, no texto secundário e no botão principal. Antes, o "OK" verde tinha 3:1.
+- Nomes, portas e resultados longos são cortados com "…", sem sobreposição. Ao passar o mouse, uma dica mostra o conteúdo completo, e os botões e indicadores também têm dicas.
+- Navegação pelas setas entre os cards. Os indicadores mostram anel de foco.
+- Em telas estreitas, os controles da barra têm prioridade sobre o texto de status, e os selos do cabeçalho somem em vez de cobrir o título.
+- A janela de detalhes abre centralizada e o texto acompanha o redimensionamento.
+- A notificação fecha ao ser clicada, a tabela não tem mais a moldura preta de foco e a animação pausa com a janela minimizada.
+- Testes novos de contraste, corte de texto, troca de vista, navegação e tamanho da janela. A suíte roda em resoluções de 640×480 a 1920×1080.
+
 ## 25.0
 
 Identificação de precisão para o mercado brasileiro e nova interface.
