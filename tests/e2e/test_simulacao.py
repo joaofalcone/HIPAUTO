@@ -53,10 +53,11 @@ class Engine(unittest.TestCase):
         expected = {
             ("pinpad", "Pinpad Gertec PPC930"), ("scanner", "Honeywell Imaging & Mobility 1400g"),
             ("scale", "Balança serial - protocolo P05"), ("printer", "Impressora serial ESC/POS"),
-            ("printer", "EPSON TM-T20 (fila TM-T20)"), ("printer", "Rede_Caixa2"),
+            ("printer", "EPSON TM-T20 (fila TM-T20)"), ("printer", "Rede Caixa2"),
             ("sat", "SAT fiscal Elgin SMART S@T"), ("cash_drawer", "Posiflex Cash Drawer"),
             ("keyboard", "AT Translated Set 2 keyboard"), ("monitor", "Samsung S24F350"),
-            ("unknown", "Porta USB-serial (Prolific PL2303)"),
+            ("serial_port", "Porta USB-serial (Prolific PL2303)"), ("serial_port", "Porta COM4 (placa-mãe)"),
+            ("serial_port", "Porta virtual Intel AMT (Serial-over-LAN)"),
         }
         self.assertEqual(set(summary), expected, summary)
         self.assertEqual(len(self.devices), len(expected), "cada aparelho deve aparecer uma única vez")
@@ -82,8 +83,20 @@ class Engine(unittest.TestCase):
         printer = by_port(self.devices, "/dev/ttyS1")
         self.assertEqual((printer["printer_protocol"], printer["port_details"]["baudrate"]), ("ESC/POS", 9600))
 
+    def test_unidentified_serial_ports_are_explained(self):
+        com4 = by_port(self.devices, "/dev/ttyS3")
+        self.assertEqual(com4["status"], "idle")
+        self.assertIn("Nenhum aparelho respondeu", com4["detail"])
+        amt = by_port(self.devices, "/dev/ttyS4")
+        self.assertEqual(amt["status"], "system")
+        self.assertIn("não é um periférico", amt["detail"])
+        self.assertFalse(any("P05" in item for item in amt["evidence"]), "a porta AMT não é sondada")
+        self.assertEqual(checks.test_device(amt)["status"], "system")
+
     def test_adapter_without_permission_is_explained(self):
         adapter = by_port(self.devices, "/dev/ttyUSB0")
+        self.assertEqual(adapter["status"], "warning")
+        self.assertIn("dialout", adapter["detail"])
         self.assertIsNone(adapter["manufacturer"])
         self.assertTrue(any("dialout" in item for item in adapter["evidence"]))
 
@@ -115,6 +128,7 @@ class Engine(unittest.TestCase):
 
     def test_every_device_passes_on_a_healthy_pdv(self):
         expected = {"/dev/ttyACM0": "ok", "/dev/ttyS0": "ok", "/dev/ttyS1": "ok", "/dev/ttyUSB0": "error",
+                    "/dev/ttyS3": "ok", "/dev/ttyS4": "system",
                     "printer:TM-T20": "ok", "printer:Rede_Caixa2": "error", "monitor:HDMI-A-1": "ok"}
         for key, status in expected.items():
             with self.subTest(key):
@@ -214,8 +228,8 @@ class Interface(unittest.TestCase):
         return [d["id"] for d in self.app.visible_devices()]
 
     def test_01_startup_lists_everything(self):
-        self.assertEqual(len(self.app.cards), 11)
-        self.assertEqual(self.app.tiles["all"].value, 11)
+        self.assertEqual(len(self.app.cards), 13)
+        self.assertEqual(self.app.tiles["all"].value, 13)
         self.assertIn("dialout", self.app.notice_var.get())
         self.assertIn("varredura", self.app.status_var.get())
         self.shot("01-inicio")
@@ -226,16 +240,18 @@ class Interface(unittest.TestCase):
         self.assertFalse(self.app.refresh_button.instate(["!disabled"]))
         self.wait(lambda: not self.app.busy, 60)
         statuses = {k: v["status"] for k, v in self.app.results.items()}
-        self.assertEqual(len(statuses), 11)
+        self.assertEqual(len(statuses), 13)
+        self.assertEqual(statuses["serial:ttyS4"], "system")
         self.assertEqual(statuses["printer:Rede_Caixa2"], "error")
         self.assertEqual(statuses["serial:ttyUSB0"], "error")
         self.assertEqual(statuses["serial:ttyS0"], "ok")
         self.assertIn("2 com falha", self.app.status_var.get())
         self.assertTrue(self.app.place_slaves(), "notificação de conclusão")
+        self.pump(.4)
         self.shot("02-testar-todos")
 
     def test_03_kpi_filters(self):
-        expected = {"active": 9, "warning": 0, "error": 2}
+        expected = {"active": 10, "warning": 0, "error": 2}
         for key, count in expected.items():
             with self.subTest(key):
                 self.click(self.app.tiles[key])
@@ -248,14 +264,14 @@ class Interface(unittest.TestCase):
         self.click(self.app.tiles["warning"])
         self.assertIn("Nenhum periférico neste filtro", self.app.empty_label.cget("text"))
         self.key(self.app, "<Escape>")
-        self.assertEqual(len(self.visible_ids()), 11)
+        self.assertEqual(len(self.visible_ids()), 13)
 
     def test_04_view_switch_and_list(self):
         switch = self.app.view_switch
         self.click(switch, x=switch.widths[0] + switch.widths[1] // 2)
         self.assertEqual(self.app.view, "list")
         self.assertTrue(self.app.list_view.winfo_ismapped())
-        self.assertEqual(len(self.app.tree.get_children()), 11)
+        self.assertEqual(len(self.app.tree.get_children()), 13)
         self.shot("04-lista")
         self.key(self.app, "<Control-Key-1>")
         self.assertEqual(self.app.view, "cards")
@@ -334,7 +350,7 @@ class Interface(unittest.TestCase):
         self.wait(lambda: not self.app.busy, 30)
         self.assertNotIn("serial:ttyACM0", self.app.cards)
         self.assertFalse(self.app.details.winfo_exists(), "detalhes de aparelho removido fecham sozinhos")
-        self.assertEqual(self.app.tiles["all"].value, 10)
+        self.assertEqual(self.app.tiles["all"].value, 12)
         control("unplugged", "")
         self.click(self.app.refresh_button)
         self.wait(lambda: not self.app.busy, 30)
@@ -433,10 +449,10 @@ class CommandLine(unittest.TestCase):
         for target in self.TARGETS:
             with self.subTest(target[-1]):
                 plain = json.loads(self.run_cli(target, "--report").stdout)
-                self.assertEqual(len(plain["devices"]), 11)
+                self.assertEqual(len(plain["devices"]), 13)
                 self.assertEqual(plain["testResults"], {})
                 tested = json.loads(self.run_cli(target, "--report", "--test").stdout)
-                self.assertEqual(len(tested["testResults"]), 11)
+                self.assertEqual(len(tested["testResults"]), 13)
                 self.assertEqual(tested["testResults"]["serial:ttyS0"]["weight"], "1.235 kg")
 
     def test_smak_probe_never_opens_the_interface(self):

@@ -92,6 +92,13 @@ def draw_icon(canvas: tk.Canvas, category: str, color: str, x: float, y: float, 
         canvas.create_text(x, y - 9, text="R$ 0,00", fill=color, font=("TkFixedFont", 6, "bold"), tags=tags)
         canvas.create_line(x, y - 2, x, y + 14, **line)
         canvas.create_line(x - 10, y + 16, x + 10, y + 16, **line)
+    elif category == "serial_port":
+        canvas.create_polygon(x - 17, y - 9, x + 17, y - 9, x + 12, y + 9, x - 12, y + 9, fill="", outline=color,
+                              width=2, joinstyle="round", tags=tags)
+        for px in (-9, -3, 3, 9):
+            canvas.create_oval(x + px - 1.6, y - 4.6, x + px + 1.6, y - 1.4, **dot)
+        for px in (-6, 0, 6):
+            canvas.create_oval(x + px - 1.6, y + 1.4, x + px + 1.6, y + 4.6, **dot)
     elif category == "card_reader":
         rounded_rect(canvas, x - 18, y - 12, x + 18, y + 12, 4, **box)
         canvas.create_line(x - 18, y - 5, x + 18, y - 5, fill=color, width=4, tags=tags)
@@ -193,8 +200,12 @@ def draw_glyph(canvas: tk.Canvas, name: str, color: str, x: float, y: float, siz
 
 # ------------------------------------------------------------------ wallpaper
 def draw_wallpaper(canvas: tk.Canvas, width: int, height: int, top: str, bottom: str, grid: str,
-                   trace: str, node: str, seed: int = 7, tags: str = "wallpaper") -> None:
-    """Technical wallpaper: vertical gradient, fine grid, circuit traces and orbit rings."""
+                   trace: str, node: str, seed: int = 7, tags: str = "wallpaper") -> dict:
+    """Technical wallpaper: vertical gradient, fine grid, circuit traces and orbit rings.
+
+    Returns the trace paths, node items and orbit centre so callers can animate them."""
+    paths: list[list[tuple[float, float]]] = []
+    nodes: list[int] = []
     canvas.delete(tags)
     steps = max(1, height // 3)
     for index in range(steps):
@@ -217,14 +228,28 @@ def draw_wallpaper(canvas: tk.Canvas, width: int, height: int, top: str, bottom:
                 y += rng.choice((-1, 1)) * 28 * rng.randint(1, 2)
             points += [x, y]
         canvas.create_line(*points, fill=trace, width=1.5, tags=tags)
-        canvas.create_oval(points[0] - 3, points[1] - 3, points[0] + 3, points[1] + 3, fill=node, outline="",
-                           tags=tags)
+        nodes.append(canvas.create_oval(points[0] - 3, points[1] - 3, points[0] + 3, points[1] + 3, fill=node,
+                                        outline="", tags=tags))
         canvas.create_oval(x - 2.5, y - 2.5, x + 2.5, y + 2.5, outline=node, width=1.5, tags=tags)
+        paths.append(list(zip(points[0::2], points[1::2])))
     cx, cy = width - 150, height * 0.55
     for radius in (60, 105, 150, 195):
         canvas.create_oval(cx - radius, cy - radius, cx + radius, cy + radius, outline=grid, width=1, tags=tags)
     for angle in (18, 132, 250):
         rad = math.radians(angle)
         px, py = cx + 105 * math.cos(rad), cy + 105 * math.sin(rad)
-        canvas.create_oval(px - 3, py - 3, px + 3, py + 3, fill=node, outline="", tags=tags)
+        nodes.append(canvas.create_oval(px - 3, py - 3, px + 3, py + 3, fill=node, outline="", tags=tags))
     canvas.tag_lower(tags)
+    return {"paths": paths, "nodes": nodes, "orbit": (cx, cy)}
+
+
+def point_on_path(path: list[tuple[float, float]], fraction: float) -> tuple[float, float]:
+    """Point at `fraction` (0..1) of a polyline's total length."""
+    lengths = [math.dist(a, b) for a, b in zip(path, path[1:])]
+    remaining = max(0.0, min(1.0, fraction)) * sum(lengths)
+    for (a, b), length in zip(zip(path, path[1:]), lengths):
+        if remaining <= length and length:
+            ratio = remaining / length
+            return a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio
+        remaining -= length
+    return path[-1]

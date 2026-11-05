@@ -1,5 +1,30 @@
 # Histórico de versões
 
+## 28.0
+
+Identificação das portas seriais "Outro" e refinamento visual.
+
+**Identificação**
+- As portas `ttyS` são identificadas pelo `/sys`, sem precisar abrir a porta:
+  - COM da placa-mãe (ex.: "Porta COM1 (placa-mãe)");
+  - placa serial PCI, com o fabricante (WCH, MosChip, Oxford e outros);
+  - porta virtual Intel AMT (Serial-over-LAN), marcada como "Sistema", sem sondagem e fora dos testes.
+- Portas sem periférico reconhecido viram "Porta serial", com o motivo:
+  - sem permissão (grupo dialout), em "Atenção";
+  - em uso por outro programa;
+  - aparelho ligado (sinais CTS/DSR/DCD) que não respondeu;
+  - "Sem resposta", quando a porta provavelmente está livre.
+- Nova escuta passiva identifica balanças que transmitem o peso sozinhas.
+- Leitores SuperMax Imaging e outros que se apresentam como teclado são reconhecidos como leitor de código (Zebex, Opticon, CipherLab e outros).
+- Filas CUPS aparecem com nome legível ("EPSON L1250 Series").
+
+**Visual**
+- O cabeçalho é animado: pacotes de luz percorrem as trilhas do circuito, os nós pulsam e um anel de radar se expande. A animação pausa com a janela minimizada.
+- Cards com borda fina, sombra, faixa lateral na cor do estado (é ela que pulsa) e elevação no hover. O estado fica na linha de baixo, então a categoria aparece inteira e o peso ocupa o canto superior.
+- "Conectado" (detectado) usa o teal da marca e "OK" (testado) usa verde, para separar visualmente as duas situações.
+- Botões com sombra e brilho superior, seletor Cards/Lista com destaque e hover, indicadores com sombra e marcador lateral do filtro ativo.
+- Lista com hover de linha, cabeçalho refinado e linhas mais altas.
+
 ## 27.0
 
 Simulação e teste de ponta a ponta de todas as opções.

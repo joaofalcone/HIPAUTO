@@ -138,6 +138,8 @@ def test_monitor(device: dict[str, Any]) -> dict[str, Any]:
 
 def run_test(device: dict[str, Any]) -> dict[str, Any]:
     category, port, path = device.get("category"), device.get("port"), str(device.get("path") or "")
+    if device.get("status") == "system":
+        return result("system", device.get("detail") or "Porta do sistema; não é um periférico")
     if category == "monitor":
         return test_monitor(device)
     if port:

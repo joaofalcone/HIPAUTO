@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .serialport import exchange, open_serial
+from .serialport import exchange, modem_lines, open_serial
 
 P05_FRAME = re.compile(rb"\x02([0-9]{5}|I{5}|N{5}|S{5})\x03")
 P05_STATES = {"IIIII": "peso instável", "NNNNN": "peso negativo", "SSSSS": "sobrecarga"}
@@ -75,6 +75,20 @@ def read_escpos_status(port: str, baudrate: int, timeout: float = 0.6) -> dict[s
     if is_escpos_status(paper):
         status.update(paper_end=bool(paper[0] & 0x60), paper_near_end=bool(paper[0] & 0x0C))
     return status
+
+
+STREAM_WEIGHT = re.compile(r"[-+]?\s*\d{1,3}[.,]\d{2,3}\s*(?:kg|KG|Kg)\b|[-+]?\d{1,3}[.,]\d{3}\s*[\r\n]")
+
+
+def listen(port: str, baudrate: int = 9600, timeout: float = 0.8) -> dict[str, Any]:
+    """Read without sending anything: catches scales that stream weight and reports line signals."""
+    with open_serial(port, baudrate) as fd:
+        lines = modem_lines(fd)
+        data = exchange(fd, b"", timeout, limit=256)
+    text = data.decode("ascii", errors="replace")
+    match = STREAM_WEIGHT.search(text)
+    weight = parse_weight(match.group(0), {"unit": "kg"}) if match else None
+    return {"lines": lines, "data": data, "weight": weight}
 
 
 def parse_weight(raw: str, settings: dict[str, Any]) -> str | None:

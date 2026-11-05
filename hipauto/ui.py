@@ -20,7 +20,7 @@ from typing import Any, Callable
 
 from . import __version__, checks, discovery, environment
 from .icons import (connection_kind, draw_connection, draw_glyph, draw_icon, draw_wallpaper, mix,
-                    rounded_rect)
+                    point_on_path, rounded_rect)
 
 # ------------------------------------------------------------------ tokens visuais
 BG = "#eef2f6"
@@ -50,17 +50,21 @@ GREEN_TEXT = "#0b7650"
 RED_TEXT = "#b42f3a"
 AMBER_TEXT = "#935600"
 BRAND_TEXT = "#066a72"
-STATUS_TEXT = {"detected": GREEN_TEXT, "ok": GREEN_TEXT, "warning": AMBER_TEXT, "error": RED_TEXT,
-               "testing": BRAND_TEXT}
+QUIET = "#8a9ba8"
+STATUS_TEXT = {"detected": BRAND_TEXT, "ok": GREEN_TEXT, "warning": AMBER_TEXT, "error": RED_TEXT,
+               "testing": BRAND_TEXT, "idle": MUTED, "system": MUTED}
 
 CATEGORIES = {"pinpad": "Pinpad", "scanner": "Leitor de código", "scale": "Balança",
               "printer": "Impressora", "keyboard": "Teclado", "biometric": "Biometria",
               "touchscreen": "Tela touch", "monitor": "Monitor", "sat": "SAT / MF-e",
               "cash_drawer": "Gaveta", "customer_display": "Display de cliente",
-              "card_reader": "Leitor de cartão", "unknown": "Outro"}
-STATUS = {"detected": ("Conectado", GREEN, GREEN_SOFT, "●"), "ok": ("OK", GREEN, GREEN_SOFT, "✓"),
+              "card_reader": "Leitor de cartão", "serial_port": "Porta serial", "unknown": "Outro"}
+# "Conectado" (detectado, ainda sem teste) usa o teal da marca; "OK" (testado) usa verde.
+STATUS = {"detected": ("Conectado", BRAND, BRAND_SOFT, "●"), "ok": ("OK", GREEN, GREEN_SOFT, "✓"),
           "warning": ("Atenção", AMBER, AMBER_SOFT, "▲"), "error": ("Falha", RED, RED_SOFT, "✕"),
-          "testing": ("Testando", BRAND, BRAND_SOFT, "◌")}
+          "testing": ("Testando", BRAND, BRAND_SOFT, "◌"), "idle": ("Sem resposta", QUIET, NEUTRAL_SOFT, "○"),
+          "system": ("Sistema", QUIET, NEUTRAL_SOFT, "◇")}
+GLOW = {GREEN: GREEN_GLOW, BRAND: ACCENT}
 ACTIVE = {"ok", "detected"}
 FILTERS = (("all", "Periféricos", "grid", BRAND), ("active", "Ativos", "check", GREEN),
            ("warning", "Atenção", "warning", AMBER), ("error", "Falhas", "close", RED))
@@ -269,17 +273,20 @@ class FlatButton(tk.Canvas):
             focused = self.focus_get() is self
         except (KeyError, tk.TclError):
             focused = False
+        w, h = self.w, self.h
+        if self.variant != "ghost" and not self._disabled and not self._pressed:
+            rounded_rect(self, 3, 5, w - 3, h - 1, 10, fill=SHADOW if self._hover else "#e1e8ee", outline="")
         if focused:
-            rounded_rect(self, 1, 1, self.w - 1, self.h - 1, 12, fill="", outline=ACCENT, width=2)
-        rounded_rect(self, 3, 3 + offset, self.w - 3, self.h - 3 + offset, 10, fill=fill,
-                     outline=border or fill, width=1)
-        x = self.w / 2
+            rounded_rect(self, 1, 1, w - 1, h - 1, 12, fill="", outline=ACCENT, width=2)
+        rounded_rect(self, 3, 3 + offset, w - 3, h - 4 + offset, 10, fill=fill, outline=border or fill, width=1)
+        if self.variant == "primary" and not self._disabled:
+            self.create_line(12, 5 + offset, w - 12, 5 + offset, fill=mix(fill, "#ffffff", .22))  # brilho superior
+        x, y = w / 2, (h - 1) / 2 + offset
         if self.icon:
-            start = (self.w - self.text_width - 22) / 2
-            draw_glyph(self, self.icon, fg, start + 7, self.h / 2 + offset, 0.9)
+            start = (w - self.text_width - 22) / 2
+            draw_glyph(self, self.icon, fg, start + 7, y, 0.9)
             x = start + 22 + self.text_width / 2
-        self.create_text(x, self.h / 2 + offset, text=self.text, fill=fg, font=self.font)
-
+        self.create_text(x, y, text=self.text, fill=fg, font=self.font)
 
 class Tooltip:
     """Small delayed hint window; one shared instance per application."""
@@ -383,17 +390,19 @@ class SegmentedControl(tk.Canvas):
             focused = False
         total = sum(self.widths) + 8
         rounded_rect(self, 1, 1, total - 1, 41, 12, fill="", outline=ACCENT if focused else BG, width=2)
-        rounded_rect(self, 3, 3, total - 3, 39, 10, fill="#e3eaf0", outline="")
+        rounded_rect(self, 3, 3, total - 3, 39, 10, fill="#e6edf2", outline=LINE)
         left = 4
         for (key, label, glyph), width in zip(self.options, self.widths):
             selected = key == self.value
             if selected:
-                rounded_rect(self, left + 1, 6, left + width - 1, 36, 8, fill=SURFACE, outline=LINE)
+                rounded_rect(self, left + 2, 8, left + width - 2, 37, 8, fill="#d3dde5", outline="")  # sombra
+                rounded_rect(self, left + 2, 6, left + width - 2, 35, 8, fill=SURFACE, outline="")
+            elif key == self.hover:
+                rounded_rect(self, left + 2, 6, left + width - 2, 35, 8, fill="#eef3f6", outline="")
             color = INK if selected else (BRAND_TEXT if key == self.hover else MUTED)
-            draw_glyph(self, glyph, color, left + 20, 21, .8)
+            draw_glyph(self, glyph, BRAND if selected else color, left + 20, 21, .8)
             self.create_text(left + 34, 21, anchor="w", text=label, fill=color, font=fonts["button"])
             left += width
-
 
 class ProgressLine(tk.Canvas):
     """3px progress indicator: determinate (fraction) or indeterminate (sliding)."""
@@ -508,17 +517,21 @@ class KpiTile(tk.Canvas):
         self.delete("all")
         width = max(self.winfo_width(), 160)
         fonts = self.app.fonts
-        border = self.color if self.selected else (mix(LINE, self.color, .35) if self.hover else LINE)
-        fill = mix(SURFACE, self.color, .06) if self.selected else SURFACE
         height = 56 if self.compact else 76
         try:
             focused = self.focus_get() is self
         except (KeyError, tk.TclError):
             focused = False
+        border = self.color if self.selected else (mix(LINE, self.color, .4) if self.hover else LINE)
+        fill = mix(SURFACE, self.color, .05) if self.selected else SURFACE
+        rounded_rect(self, 3, 5, width - 3, height - 1, 14, fill=SHADOW if self.hover else "#e3e9ee", outline="")
         if focused:
             rounded_rect(self, 0, 0, width, height, 16, fill="", outline=ACCENT, width=2)
-        rounded_rect(self, 2, 2, width - 2, height - 2, 14, fill=fill, outline=border, width=2 if self.selected else 1)
-        middle, radius = height / 2, (14 if self.compact else 20)
+        rounded_rect(self, 2, 2, width - 2, height - 3, 14, fill=fill, outline=border,
+                     width=1.5 if self.selected else 1)
+        if self.selected:
+            rounded_rect(self, 2, 14, 6, height - 15, 2, fill=self.color, outline="")  # marcador lateral
+        middle, radius = (height - 1) / 2, (14 if self.compact else 20)
         self.create_oval(18, middle - radius, 18 + 2 * radius, middle + radius, fill=mix(SURFACE, self.color, .14),
                          outline="")
         draw_glyph(self, self.glyph, self.color, 18 + radius, middle, .9 if self.compact else 1.1)
@@ -529,13 +542,12 @@ class KpiTile(tk.Canvas):
             self.create_text(self.bbox(value)[2] + 10, middle + 1, anchor="w", text=self.label.upper(),
                              fill=MUTED, font=fonts["tag"])
         else:
-            self.create_text(text_x, 30, anchor="w", text=str(self.value), fill=INK, font=fonts["kpi"])
-            self.create_text(text_x, 54, anchor="w", text=self.label.upper(), fill=MUTED, font=fonts["tag"])
+            self.create_text(text_x, 29, anchor="w", text=str(self.value), fill=INK, font=fonts["kpi"])
+            self.create_text(text_x, 53, anchor="w", text=self.label.upper(), fill=MUTED, font=fonts["tag"])
         if self.selected and self.key != "all":
             text_color = {GREEN: GREEN_TEXT, AMBER: AMBER_TEXT, RED: RED_TEXT}.get(self.color, BRAND_TEXT)
             self.create_text(width - 16, 16 if self.compact else 20, anchor="e", text="FILTRO ATIVO", fill=text_color,
                              font=fonts["tag"])
-
 
 class DeviceCard:
     """One animated, clickable and keyboard-focusable peripheral card."""
@@ -589,66 +601,67 @@ class DeviceCard:
         self.draw()
 
     def draw(self) -> None:
-        canvas, fonts = self.canvas, self.app.fonts
+        canvas, fonts, measure = self.canvas, self.app.fonts, self.app.measure
         canvas.delete("all")
         width = max(canvas.winfo_width(), CARD_MIN_WIDTH) if canvas.winfo_width() > 1 else CARD_MIN_WIDTH
         status = self.status
         label, color, soft, symbol = status_style(status)
         focused = self._focused()
         lift = 2 if self.hover or focused else 0
-        if lift:
-            rounded_rect(canvas, 6, 8, width - 2, CARD_HEIGHT - 1, 17, fill=SHADOW, outline="")
-        border = ACCENT if focused else (LINE if status == "testing" else color)
-        self.shape = rounded_rect(canvas, 3, 5 - lift, width - 5, CARD_HEIGHT - 5 - lift, 16, fill=SURFACE,
-                                  outline=border, width=2 if status != "testing" or focused else 1)
-        top = 2 - lift
-        icon_color = MUTED if status == "testing" else color
-        canvas.create_oval(18, 20 + top, 64, 66 + top, fill=soft, outline="")
-        draw_icon(canvas, self.device.get("category", "unknown"), icon_color, 41, 43 + top, SURFACE)
+        bottom = CARD_HEIGHT - 6
+        # Sombra suave sempre; mais forte quando o card "levanta" no hover.
+        rounded_rect(canvas, 4, 6 + (1 if lift else 0), width - 4, bottom + 2 + (1 if lift else 0), 16,
+                     fill=SHADOW if lift else "#e2e8ed", outline="")
+        top = 3 - lift
+        border = ACCENT if focused else (mix(LINE, color, .55) if self.hover else LINE)
+        rounded_rect(canvas, 3, top, width - 5, bottom - lift, 16, fill=SURFACE, outline=border,
+                     width=2 if focused else 1)
+        # Faixa lateral com a cor do estado: é ela que pulsa nos periféricos ativos.
+        self.shape = rounded_rect(canvas, 3, top + 16, 8, bottom - lift - 16, 2, fill=color, outline="")
+        icon_color = QUIET if status == "testing" else color
+        oy = top - 1
+        canvas.create_oval(20, 20 + oy, 66, 66 + oy, fill=soft, outline="")
+        draw_icon(canvas, self.device.get("category", "unknown"), icon_color, 43, 43 + oy, SURFACE)
         self.spinner = None
         if status == "testing":
-            self.spinner = canvas.create_arc(14, 16 + top, 68, 70 + top, start=0, extent=80, style="arc",
+            self.spinner = canvas.create_arc(16, 16 + oy, 70, 70 + oy, start=0, extent=80, style="arc",
                                              outline=BRAND, width=3)
-        measure = self.app.measure
         text_color = MUTED if status == "testing" else status_text(status)
-        pill_text = f"{symbol} {label}"
-        pill_width = measure("tag_big", pill_text) + 20
-        rounded_rect(canvas, width - 18 - pill_width, 16 + top, width - 18, 38 + top, 11, fill=soft, outline="")
-        canvas.create_text(width - 18 - pill_width / 2, 27 + top, text=pill_text, fill=status_text(status),
-                           font=fonts["tag_big"])
+        weight = (self.result or {}).get("weight") or self.device.get("weight")
+        corner = 0
+        if weight:  # o canto superior fica para o peso; o estado vai para a linha de baixo
+            chip = f"⚖ {weight}"
+            corner = measure("tag_big", chip) + 18
+            rounded_rect(canvas, width - 20 - corner, 16 + oy, width - 20, 38 + oy, 11, fill=BRAND_SOFT, outline="")
+            canvas.create_text(width - 20 - corner / 2, 27 + oy, text=chip, fill=BRAND_DARK, font=fonts["tag_big"])
         category = CATEGORIES.get(self.device.get("category"), "Outro").upper()
-        canvas.create_text(78, 27 + top, anchor="w", fill=text_color, font=fonts["tag"],
-                           text=fit_text(lambda t: measure("tag", t), category, width - 110 - pill_width))
+        canvas.create_text(80, 27 + oy, anchor="w", fill=text_color, font=fonts["tag"],
+                           text=fit_text(lambda t: measure("tag", t), category, width - 110 - corner))
         name = fit_text(lambda t: measure("card", t), self.device.get("name") or "Equipamento sem nome",
-                        width - 100, lines=2)
-        canvas.create_text(78, 54 + top, anchor="w", fill=INK, font=fonts["card"], text=name)
+                        width - 104, lines=2)
+        canvas.create_text(80, 54 + oy, anchor="w", fill=INK, font=fonts["card"], text=name)
         sub = subtitle(self.device)
         if sub:
-            canvas.create_text(78, 80 + top, anchor="w", fill=MUTED, font=fonts["small"],
-                               text=fit_text(lambda t: measure("small", t), sub, width - 100))
-        canvas.create_line(18, 96 + top, width - 22, 96 + top, fill=LINE)
-        draw_connection(canvas, connection_kind(self.device.get("connection")), MUTED, 28, 116 + top)
-        weight = (self.result or {}).get("weight") or self.device.get("weight")
-        canvas.create_text(42, 116 + top, anchor="w", fill=MUTED, font=fonts["small"],
-                           text=fit_text(lambda t: measure("small", t), port_text(self.device), width - 160))
-        if weight:
-            chip = f"⚖ {weight}"
-            chip_width = self.app.measure("tag_big", chip) + 18
-            rounded_rect(canvas, width - 22 - chip_width, 105 + top, width - 22, 127 + top, 10, fill=BRAND_SOFT,
-                         outline="")
-            canvas.create_text(width - 22 - chip_width / 2, 116 + top, text=chip, fill=BRAND_DARK,
-                               font=fonts["tag_big"])
-        elif self.hover or focused:
-            canvas.create_text(width - 22, 116 + top, anchor="e", text="Detalhes  ›", fill=BRAND_TEXT,
-                               font=fonts["tag_big"])
+            canvas.create_text(80, 80 + oy, anchor="w", fill=MUTED, font=fonts["small"],
+                               text=fit_text(lambda t: measure("small", t), sub, width - 104))
+        canvas.create_line(22, 96 + oy, width - 24, 96 + oy, fill="#e8eef2")
+        draw_connection(canvas, connection_kind(self.device.get("connection")), QUIET, 30, 115 + oy)
+        pill_text = f"{symbol} {label}"
+        pill_width = measure("tag_big", pill_text) + 20
+        rounded_rect(canvas, width - 22 - pill_width, 104 + oy, width - 22, 126 + oy, 11, fill=soft, outline="")
+        canvas.create_text(width - 22 - pill_width / 2, 115 + oy, text=pill_text, fill=status_text(status),
+                           font=fonts["tag_big"])
+        canvas.create_text(44, 115 + oy, anchor="w", fill=MUTED, font=fonts["small"],
+                           text=fit_text(lambda t: measure("small", t), port_text(self.device),
+                                         width - 80 - pill_width))
 
     def animate(self, phase: float) -> None:
         if self.spinner is not None:
             self.canvas.itemconfigure(self.spinner, start=(-phase * 240) % 360)
-        elif self.shape is not None and self.active and not self.hover and not self._focused():
+        elif self.shape is not None and self.active:
+            color = status_style(self.status)[1]
             wave = (math.sin(phase * 2.2) + 1) / 2
-            self.canvas.itemconfigure(self.shape, outline=mix(GREEN, GREEN_GLOW, wave), width=2 + wave)
-
+            self.canvas.itemconfigure(self.shape, fill=mix(color, GLOW.get(color, color), wave))
 
 class Toast:
     """Transient notification sliding in at the bottom-right corner."""
@@ -874,7 +887,9 @@ class HipautoDesktop(tk.Tk):
                         foreground=MUTED, relief="flat", borderwidth=0)
         style.map("Treeview.Heading", background=[("active", "#dfe8ee")])
         style.map("Treeview", background=[("selected", "#d4eef0")], foreground=[("selected", INK)])
-        style.configure("Treeview", rowheight=38, bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE)
+        style.configure("Treeview", rowheight=40, bordercolor=LINE, lightcolor=SURFACE, darkcolor=SURFACE)
+        style.configure("Treeview.Heading", background="#f1f5f8", bordercolor=LINE, lightcolor="#f1f5f8",
+                        darkcolor=LINE, padding=(12, 10))
         style.layout("Treeview", [("Treeview.treearea", {"sticky": "nswe"})])  # sem moldura de foco preta
         style.configure("Vertical.TScrollbar", background="#dfe7ec", troughcolor=BG, borderwidth=0,
                         arrowsize=12, gripcount=0)
@@ -971,6 +986,10 @@ class HipautoDesktop(tk.Tk):
         for status in STATUS:
             self.tree.tag_configure(status, foreground=INK if status == "detected" else status_text(status))
         self.tree.tag_configure("stripe", background=STRIPE)
+        self.tree.tag_configure("hover", background="#e6f4f5")  # criada por último: tem prioridade
+        self._hover_row = ""
+        self.tree.bind("<Motion>", self._tree_hover, add="+")
+        self.tree.bind("<Leave>", lambda _e: self._tree_hover(None), add="+")
         scroll = ttk.Scrollbar(table, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scroll.set)
         self.tree.pack(side="left", fill="both", expand=True)
@@ -986,10 +1005,10 @@ class HipautoDesktop(tk.Tk):
         width, height = max(canvas.winfo_width(), 320), (76 if self.compact else 128)
         middle = height / 2
         canvas.delete("all")
-        draw_wallpaper(canvas, width, height, HEADER, HEADER_END, "#12384b", "#1b4f63", ACCENT)
+        self.hero_fx = draw_wallpaper(canvas, width, height, HEADER, HEADER_END, "#12384b", "#1b4f63", ACCENT)
         size = 40 if self.compact else 56
-        rounded_rect(canvas, 28, middle - size / 2, 28 + size, middle + size / 2, 12 if self.compact else 16,
-                     fill=ACCENT, outline="")
+        self.hero_content = rounded_rect(canvas, 28, middle - size / 2, 28 + size, middle + size / 2,
+                                         12 if self.compact else 16, fill=ACCENT, outline="")
         canvas.create_text(28 + size / 2, middle, text="H", fill="#ffffff",
                            font=fonts["heading"] if self.compact else fonts["brand"])
         title_x = 28 + size + 20
@@ -1016,6 +1035,35 @@ class HipautoDesktop(tk.Tk):
             else:
                 canvas.create_oval(left + 12, middle - 5, left + 20, middle + 3, fill=color, outline="")
             x = left - 10
+
+    def _animate_hero(self, phase: float) -> None:
+        """Data packets travel along the circuit traces, nodes breathe and a radar ring expands."""
+        fx, canvas = getattr(self, "hero_fx", None), self.hero
+        if not fx:
+            return
+        canvas.delete("packet")
+        for index, path in enumerate(fx["paths"][:10]):
+            if len(path) < 2:
+                continue
+            cycle = (phase * 0.24 + index * 0.31) % 1.5  # cada trilha tem uma pausa entre os pacotes
+            if 0 <= cycle <= 1:
+                x, y = point_on_path(path, cycle)
+                canvas.create_oval(x - 8, y - 8, x + 8, y + 8, outline="", tags="packet",
+                                   fill=mix(HEADER_END, ACCENT, .28))  # halo
+            for lag, size, strength in ((0.0, 3.8, 1.0), (0.035, 3.0, .7), (0.07, 2.3, .45), (0.105, 1.7, .25)):
+                t = cycle - lag
+                if 0 <= t <= 1:
+                    x, y = point_on_path(path, t)
+                    canvas.create_oval(x - size, y - size, x + size, y + size, outline="", tags="packet",
+                                       fill=mix(HEADER_END, "#c4fff2", strength))
+        for index, node in enumerate(fx["nodes"]):
+            wave = (math.sin(phase * 1.6 + index * 1.3) + 1) / 2
+            canvas.itemconfigure(node, fill=mix("#1d6e72", "#7ff0d6", wave))
+        cx, cy = fx["orbit"]
+        radius = (phase * 36) % 210
+        canvas.create_oval(cx - radius, cy - radius, cx + radius, cy + radius, width=1.5, tags="packet",
+                           outline=mix("#33a3a3", HEADER_END, radius / 210))
+        canvas.tag_lower("packet", self.hero_content)  # abaixo do logo, títulos e selos
 
     def _on_resize(self, event: tk.Event) -> None:
         if event.widget is not self:
@@ -1173,7 +1221,8 @@ class HipautoDesktop(tk.Tk):
             counts = {"ok": 0, "warning": 0, "error": 0}
             for index, device in enumerate(targets, 1):
                 outcome = checks.test_device(device)
-                counts[outcome.get("status") if outcome.get("status") in counts else "warning"] += 1
+                if outcome.get("status") in counts:
+                    counts[outcome["status"]] += 1
                 self._post(self._apply_result, device["id"], outcome, index, len(targets))
             return counts
 
@@ -1291,6 +1340,16 @@ class HipautoDesktop(tk.Tk):
                                                  sticky="nsew", padx=5, pady=5)
         self.card_scroll.after_idle(self.card_scroll._sync)
 
+    def _tree_hover(self, event: tk.Event | None) -> None:
+        row = self.tree.identify_row(event.y) if event is not None else ""
+        if row == self._hover_row:
+            return
+        for item, add in ((self._hover_row, False), (row, True)):
+            if item and self.tree.exists(item):
+                tags = [t for t in self.tree.item(item, "tags") if t != "hover"]
+                self.tree.item(item, tags=(["hover"] + tags) if add else tags)
+        self._hover_row = row
+
     def _rewrap_table(self) -> None:
         """Re-fit cell texts when the columns change width (window resize or drag)."""
         widths = tuple(self.tree.column(key, "width") for key in ("device", "port", "test"))
@@ -1300,6 +1359,7 @@ class HipautoDesktop(tk.Tk):
 
     def _render_table(self) -> None:
         selected = self.tree.selection()
+        self._hover_row = ""
         self.tree.delete(*self.tree.get_children())
         for row, device in enumerate(self.visible_devices()):
             result = self.results.get(device["id"])
@@ -1334,6 +1394,7 @@ class HipautoDesktop(tk.Tk):
             return
         self._phase += FRAME_MS / 1000
         if self.state() != "iconic":  # minimizado: não gasta CPU com animação
+            self._animate_hero(self._phase)
             for card in self.cards.values():
                 card.animate(self._phase)
             self.progress.tick(self._phase)
