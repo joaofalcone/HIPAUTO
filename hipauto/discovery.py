@@ -7,6 +7,7 @@ pelo caminho físico no barramento, de modo que cada aparelho apareça uma únic
 
 from __future__ import annotations
 
+import os
 import re
 import socket
 from concurrent.futures import ThreadPoolExecutor
@@ -309,8 +310,10 @@ def attach_usb_printers(devices: list[dict[str, Any]]) -> list[dict[str, Any]]:
             queue.update(status="error", detail="Fila USB existe, mas a impressora não está conectada")
             continue
         used.add(match["id"])
-        for key in ("vendor_id", "product_id", "serial_number", "manufacturer", "driver", "usb_node"):
+        for key in ("vendor_id", "product_id", "serial_number", "manufacturer", "model", "product", "commands",
+                    "driver", "usb_node", "usb_speed"):
             queue[key] = queue.get(key) or match.get(key)
+        queue["evidence"] = list(match.get("evidence") or []) + list(queue.get("evidence") or [])
         queue["usb_path"] = match.get("path")
         queue["name"] = f"{match['name']} (fila {queue['queue']})"
     return [d for d in devices if d["id"] not in used]
@@ -418,7 +421,7 @@ def confidence(device: dict[str, Any]) -> dict[str, str]:
 
 def enrich(device: dict[str, Any], ports: dict[str, list[str]], config: dict[str, Any]) -> None:
     port = device.get("port")
-    device["stable_ports"] = ports.get(port or "", [])
+    device["stable_ports"] = ports.get(port or "", []) or (ports.get(os.path.realpath(port), []) if port else [])
     device["recommended_port"] = (device["stable_ports"] or [port])[0] if port else device.get("port_name")
     device["port_name"] = device.get("port_name") or (Path(port).name if port else device.get("queue"))
     evidence = device["evidence"]

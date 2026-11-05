@@ -79,6 +79,11 @@ OVERRIDES = {
     "3036:0002": {"category": "biometric", "model": "iDBio", "name": "Leitor biométrico Control iD iDBio"},
     "2fe7:0001": {"category": "sat", "model": "SMART S@T", "name": "SAT fiscal Elgin SMART S@T"},
     "3219:0044": {"category": "keyboard", "model": "SKO-44", "name": "Teclado SMAK SKO-44"},
+    "067b:2303": {"model": "PL2303", "adapter": True},
+    "1a86:7523": {"model": "CH340", "adapter": True},
+    "1a86:7522": {"model": "CH340", "adapter": True},
+    "0403:6001": {"model": "FT232R", "adapter": True},
+    "10c4:ea60": {"model": "CP210x", "adapter": True},
     "0fe6:811e": {"category": "printer", "model": "térmica USB", "manufacturer": "Genérica",
                   "name": "Impressora térmica USB (controladora 0fe6:811e, ex.: Elgin i9)"},
 }

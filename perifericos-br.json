@@ -289,7 +289,7 @@
    "adapter": true
   },
   "0403:6001": {
-   "model": "FT232 Serial (UART) IC",
+   "model": "FT232R",
    "adapter": true
   },
   "0403:6002": {
@@ -2269,7 +2269,7 @@
    "adapter": true
   },
   "067b:2303": {
-   "model": "PL2303 Serial Port / Mobile Phone Data Cable",
+   "model": "PL2303",
    "adapter": true
   },
   "067b:2305": {
@@ -3301,7 +3301,7 @@
    "adapter": true
   },
   "10c4:ea60": {
-   "model": "CP210x UART Bridge",
+   "model": "CP210x",
    "adapter": true
   },
   "10c4:ea61": {
@@ -3482,11 +3482,11 @@
    "adapter": true
   },
   "1a86:7522": {
-   "model": "CH340 serial converter",
+   "model": "CH340",
    "adapter": true
   },
   "1a86:7523": {
-   "model": "CH340 serial converter",
+   "model": "CH340",
    "adapter": true
   },
   "1a86:752d": {

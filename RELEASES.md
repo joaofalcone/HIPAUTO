@@ -1,5 +1,16 @@
 # Histórico de versões
 
+## 27.0
+
+Simulação e teste de ponta a ponta de todas as opções.
+
+- Novo PDV simulado (`tests/e2e/`). Um container Ubuntu 22.04 recebe `/sys`, `/proc` e `/dev` falsos, comandos `udevadm`, `lpstat` e `systemctl` simulados e periféricos virtuais que respondem de verdade pelas portas seriais: balança P05, impressora ESC/POS, pinpad Gertec, leitor Honeywell, Epson USB com fila CUPS, SAT Elgin, gaveta Posiflex, impressora de rede, monitor Samsung e adaptador PL2303.
+- 35 testes de ponta a ponta acionam cada opção como usuário comum: Testar todos, Atualizar, filtros, Cards/Lista, detalhes (testar, copiar, fechar, Esc), atalhos, navegação pelas setas, dicas, notificações, modo compacto, conexão e desconexão a quente, porta ocupada, sem papel, offline, balança instável, fila desativada e falta de permissão. Também cobrem as opções de linha de comando no código-fonte e no executável.
+- Corrigido: o `config.json` publicado marcava qualquer `/dev/ttyUSB0` como balança, o que rotulava errado pinpads e impressoras em adaptadores USB-serial. A balança P05 já é identificada automaticamente.
+- Corrigido: a fila CUPS de uma impressora USB perdia o modelo, a linguagem (ESC/POS) e as evidências do IEEE 1284.
+- Corrigido: a porta estável (`/dev/serial/by-id`) não era encontrada quando o nó da porta era um link.
+- Adaptadores USB-serial aparecem com nome curto (PL2303, CH340, FT232R, CP210x).
+
 ## 26.0
 
 Revisão e refinamento do front.
