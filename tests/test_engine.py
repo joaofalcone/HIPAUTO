@@ -2,6 +2,7 @@ import os
 import pty
 import sys
 import threading
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -233,6 +234,81 @@ class DiscoveryTests(unittest.TestCase):
             discovery.discover()
         self.assertNotIn("lpadmin", calls)
         self.assertNotIn("lpoptions", calls)
+
+
+class SerialIdentificationTests(unittest.TestCase):
+    def sysfs(self, target_parts, files):
+        import tempfile
+        root = Path(tempfile.mkdtemp())
+        target = root.joinpath(*target_parts)
+        target.mkdir(parents=True)
+        for relative, content in files.items():
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        link = root / "class/tty/ttyS4/device"
+        link.parent.mkdir(parents=True)
+        link.symlink_to(target)
+        return str(root)
+
+    def test_intel_amt_serial_over_lan(self):
+        root = self.sysfs(["devices/pci0000:00/0000:00:16.3"],
+                          {"devices/pci0000:00/0000:00:16.3/vendor": "0x8086\n",
+                           "devices/pci0000:00/0000:00:16.3/class": "0x070002\n"})
+        hardware = discovery.serial_hardware("ttyS4", root)
+        self.assertEqual(hardware["kind"], "amt")
+        self.assertIn("Intel AMT", discovery.serial_port_name("ttyS4", hardware))
+
+    def test_pci_serial_card_brand(self):
+        root = self.sysfs(["devices/pci0000:00/0000:03:00.0"],
+                          {"devices/pci0000:00/0000:03:00.0/vendor": "0x1c00\n",
+                           "devices/pci0000:00/0000:03:00.0/class": "0x070002\n"})
+        hardware = discovery.serial_hardware("ttyS4", root)
+        self.assertEqual(discovery.serial_port_name("ttyS4", hardware), "Porta serial ttyS4 (placa WCH)")
+
+    def test_motherboard_com_port(self):
+        root = self.sysfs(["devices/pnp0/00:05"], {})
+        hardware = discovery.serial_hardware("ttyS4", root)
+        self.assertEqual(discovery.serial_port_name("ttyS0", hardware), "Porta COM1 (placa-mãe)")
+
+    def test_unidentified_port_is_explained(self):
+        cases = [("permission", None, b"", "warning", "dialout"),
+                 ("silent", {"CTS": True, "DSR": True, "DCD": False, "RI": False}, b"", "detected", "CTS, DSR"),
+                 ("silent", {"CTS": False, "DSR": False, "DCD": False, "RI": False}, b"", "idle", "livre"),
+                 ("silent", None, b"", "idle", "protocolos testados"),
+                 ("silent", None, b"xyz", "detected", "dados")]
+        for reason, lines, data, status, text in cases:
+            with self.subTest(reason=reason, lines=lines):
+                device = dev(id="serial:ttyS0", category="unknown", port="/dev/ttyS0")
+                discovery.finish_unidentified(device, reason, lines, data)
+                self.assertEqual(device["category"], "serial_port")
+                self.assertEqual(device["status"], status)
+                self.assertIn(text, device["detail"])
+
+    def test_streaming_scale_detected_passively(self):
+        master, slave = pty.openpty()
+
+        def stream():  # a balança transmite sozinha, sem receber comandos
+            for _ in range(4):
+                time.sleep(.1)
+                os.write(master, b"ST,GS,   1.250kg\r\n")
+
+        thread = threading.Thread(target=stream)
+        thread.start()
+        try:
+            heard = protocols.listen(os.ttyname(slave), timeout=.6)
+        finally:
+            thread.join()
+            os.close(master)
+            os.close(slave)
+        self.assertEqual(heard["weight"], "1.25 kg")
+
+    def test_cups_queue_name_is_readable(self):
+        def fake_run(cmd, timeout=5.0):
+            return 0, ("printer EPSON_L1250_Series is idle.  enabled" if cmd == ["lpstat", "-p"]
+                       else "device for EPSON_L1250_Series: usb://EPSON/L1250")
+        with patch.object(discovery, "run", fake_run):
+            self.assertEqual(discovery.cups_queues()[0]["name"], "EPSON L1250 Series")
 
 
 class SmakCommandTests(unittest.TestCase):

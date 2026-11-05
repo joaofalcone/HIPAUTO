@@ -44,6 +44,8 @@ TTYS = {  # nó: (usb ou None, propriedades udev, uart type)
     "ttyS0": (None, {}, "4"),
     "ttyS1": (None, {}, "4"),
     "ttyS2": (None, {}, "0"),  # porta sem UART real: deve ser ignorada
+    "ttyS3": (None, {}, "4"),  # COM4 da placa-mãe, sem nada ligado
+    "ttyS4": (None, {}, "4"),  # porta virtual Intel AMT (Serial-over-LAN)
     "ttyACM0": ("1-4", {"ID_VENDOR_ID": "1753", "ID_MODEL_ID": "c902", "ID_VENDOR": "GERTEC", "ID_MODEL": "PPC930",
                         "ID_SERIAL_SHORT": "PP123", "ID_USB_DRIVER": "cdc_acm"}, None),
     "ttyUSB0": ("1-3", {"ID_VENDOR_ID": "067b", "ID_MODEL_ID": "2303", "ID_VENDOR": "Prolific_Technology_Inc.",
@@ -126,8 +128,13 @@ def build_sys():
         folder.mkdir(parents=True, exist_ok=True)
         if kind is not None:
             write(folder / "type", kind + "\n")
-            Path("/sys/devices/platform/serial8250/tty").mkdir(parents=True, exist_ok=True)
-            link(folder / "device", "/sys/devices/platform/serial8250")
+            target = {"ttyS3": "/sys/devices/pnp0/00:05", "ttyS4": "/sys/devices/pci0000:00/0000:00:16.3"}.get(
+                name, "/sys/devices/platform/serial8250")
+            Path(target).mkdir(parents=True, exist_ok=True)
+            if name == "ttyS4":
+                write(Path(target) / "vendor", "0x8086\n")
+                write(Path(target) / "class", "0x070002\n")
+            link(folder / "device", target)
         else:
             iface = Path(PCI) / usb / f"{usb}:1.0"
             link(folder / "device", iface)
@@ -219,7 +226,8 @@ def main():
     build_sys()
     build_proc()
     emulators = {"ttyS0": Emulator("ttyS0", "scale"), "ttyS1": Emulator("ttyS1", "printer"),
-                 "ttyACM0": Emulator("ttyACM0", "silent"), "ttyUSB0": Emulator("ttyUSB0", "silent")}
+                 "ttyACM0": Emulator("ttyACM0", "silent"), "ttyUSB0": Emulator("ttyUSB0", "silent"),
+                 "ttyS3": Emulator("ttyS3", "silent"), "ttyS4": Emulator("ttyS4", "silent")}
     props = {}
     for name, emulator in emulators.items():
         link(f"/dev/{name}", emulator.path)

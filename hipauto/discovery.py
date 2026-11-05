@@ -89,6 +89,43 @@ def uart_present(name: str) -> bool:
     return False
 
 
+PCI_SERIAL_VENDORS = {"1c00": "WCH", "4348": "WCH", "9710": "MosChip", "1415": "Oxford",
+                      "13fe": "Advantech", "125b": "ASIX", "1407": "Lava", "131f": "SIIG", "10b5": "PLX"}
+PCI_ADDRESS = re.compile(r"^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-7]$")
+
+
+def serial_hardware(name: str, sysfs: str = "/sys") -> dict[str, str]:
+    """Where a ttyS port comes from, read from sysfs (works without opening the port)."""
+    try:
+        real = Path(f"{sysfs}/class/tty/{name}/device").resolve()
+    except OSError:
+        return {"kind": "unknown"}
+    pci = next((p for p in [real, *real.parents] if PCI_ADDRESS.match(p.name)), None)
+    if pci is not None:
+        vendor = read(pci / "vendor").lower().replace("0x", "")
+        klass = read(pci / "class").lower()
+        if vendor == "8086" and klass.startswith("0x0700"):
+            return {"kind": "amt", "pci": pci.name}
+        brand = PCI_SERIAL_VENDORS.get(vendor)
+        return {"kind": "pci", "pci": pci.name, "brand": brand or f"PCI {vendor}"}
+    text = str(real).lower()
+    if "/pnp" in text:
+        return {"kind": "onboard"}
+    return {"kind": "platform"}
+
+
+def serial_port_name(name: str, hardware: dict[str, str]) -> str:
+    number = re.sub(r"\D", "", name)
+    kind = hardware.get("kind")
+    if kind == "amt":
+        return "Porta virtual Intel AMT (Serial-over-LAN)"
+    if kind == "pci":
+        return f"Porta serial {name} (placa {hardware['brand']})"
+    if kind == "onboard" and number:
+        return f"Porta COM{int(number) + 1} (placa-mãe)"
+    return f"Porta serial {name}"
+
+
 def stable_ports() -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     for folder in (Path("/dev/serial/by-id"), Path("/dev/serial/by-path")):
@@ -131,9 +168,19 @@ def serial_devices(config: dict[str, Any]) -> list[dict[str, Any]]:
         category = (aliases.get(str(node)) or aliases.get(node.name)
                     or (None if adapter else identity.get("category"))
                     or ("unknown" if adapter else catalog.classify(label)))
-        result.append(new_device(
+        extra: dict[str, Any] = {}
+        if not usb:
+            hardware = serial_hardware(node.name)
+            label = label or serial_port_name(node.name, hardware)
+            extra["hardware"] = hardware
+            if hardware.get("kind") == "amt" and category == "unknown":
+                # Porta de gerenciamento remoto da placa-mãe: não é periférico e não é sondada.
+                category = "serial_port"
+                extra.update(status="system", detail="Porta de gerenciamento remoto do processador Intel (AMT); "
+                                                      "não é um periférico e pode ser ignorada")
+        result.append(new_device(**extra,
             id=f"serial:{node.name}", source="serial", category=category,
-            name=label or ("Adaptador USB-serial" if usb else f"Porta serial {node.name}"),
+            name=label or "Adaptador USB-serial",
             connection="USB-Serial" if usb else "Serial RS-232", port=str(node), path=str(node),
             vendor_id=vid, product_id=pid, serial_number=props.get("ID_SERIAL_SHORT"),
             manufacturer=None if adapter else (vendor or None), model=None if adapter else (model or None),
@@ -271,7 +318,8 @@ def cups_queues() -> list[dict[str, Any]]:
         queue, state = match.groups()
         uri = uris.get(queue, "")
         local = uri.startswith(("usb://", "serial:", "parallel:"))
-        device = new_device(id=f"printer:{queue}", source="printer", category="printer", name=queue,
+        device = new_device(id=f"printer:{queue}", source="printer", category="printer",
+                            name=" ".join(queue.replace("_", " ").split()),
                             connection="USB" if uri.startswith("usb://") else ("Local" if local else "Rede"),
                             path=queue, queue=queue, printer_uri=uri, detail=f"Fila CUPS: {state.strip()}")
         if "disabled" in state.lower():
@@ -448,10 +496,12 @@ def probe_serial_port(device: dict[str, Any]) -> None:
     port = device["port"]
     if port_in_use(port):
         device["evidence"].append("Sondagem ignorada: porta em uso por outro programa")
+        finish_unidentified(device, "busy")
         return
     probe = protocols.probe_p05(port)
     if probe.get("error") == "permission-denied":
         device["evidence"].append("Sondagem sem permissão na porta (grupo dialout)")
+        finish_unidentified(device, "permission")
         return
     if probe.get("matched"):
         decoded = probe["decoded"]
@@ -479,6 +529,48 @@ def probe_serial_port(device: dict[str, Any]) -> None:
             "port_details": {"baudrate": printer["baudrate"], "data_bits": 8, "stop_bits": 1, "parity": "N"},
         })
         device["evidence"].append(f"ESC/POS: DLE EOT 1 -> {printer['hex']} a {printer['baudrate']} bps")
+        return
+    try:
+        heard = protocols.listen(port)
+    except (OSError, ValueError):
+        heard = {"lines": None, "data": b"", "weight": None}
+    if heard["weight"]:
+        device.update({
+            "category": "scale", "name": "Balança serial - transmissão contínua", "scale_protocol": "contínuo",
+            "weight": heard["weight"], "detail": f"Balança identificada pelo peso que transmite sozinha: {heard['weight']}",
+            "confidence": {"level": "medium", "label": "Média",
+                           "reason": "A porta transmite um valor de peso sem receber comandos"},
+        })
+        device["evidence"].append(f"Escuta passiva: {heard['data'][:40]!r}")
+        return
+    finish_unidentified(device, "silent", heard["lines"], heard["data"])
+
+
+def finish_unidentified(device: dict[str, Any], reason: str, lines: dict[str, bool] | None = None,
+                        data: bytes = b"") -> None:
+    """Explain an unidentified serial port instead of calling it just "Outro"."""
+    if device.get("category") != "unknown":
+        return
+    device["category"] = "serial_port"
+    active = sorted(name for name, on in (lines or {}).items() if on)
+    if lines is not None:
+        device["evidence"].append("Sinais da porta: " + (", ".join(active) if active else "nenhum ativo"))
+    if reason == "permission":
+        device.update(status="warning", detail="Sem permissão para identificar o aparelho ligado nesta porta; "
+                                               "adicione o usuário ao grupo dialout")
+    elif reason == "busy":
+        device.update(detail="Porta em uso por outro programa (ex.: sistema do PDV); não foi sondada")
+    elif active:
+        device.update(detail=f"Há um aparelho ligado (sinais {', '.join(active)}), mas ele não respondeu aos "
+                             "protocolos de balança e impressora")
+    elif data:
+        device.update(detail="A porta recebeu dados, mas o protocolo não foi reconhecido")
+    elif lines is not None:
+        device.update(status="idle", detail="Nenhum aparelho respondeu e não há sinais elétricos na porta: "
+                                            "provavelmente livre ou com o aparelho desligado")
+    else:
+        device.update(status="idle", detail="Nenhum aparelho respondeu aos protocolos testados "
+                                            "(balança P05, impressora ESC/POS e escuta passiva)")
 
 
 def identify_serial(devices: list[dict[str, Any]]) -> None:

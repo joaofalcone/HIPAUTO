@@ -13,7 +13,7 @@ Compatível com Ubuntu Desktop 22.04 ou superior em computadores x86-64.
 SHA-256 do executável:
 
 ```text
-B8721454C0622C2E7076479E41611D0EB2D2493BAA6674D66CBF05F2AA0A757F
+46CDED81F5113C1BC213D0E106D325D4F329B317A27739EA74872D0D3A7CA3B7
 ```
 
 ## Abrir sempre a versão mais recente (atalho de terminal)

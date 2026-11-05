@@ -27,7 +27,7 @@ SAT_PATTERN = re.compile(r"\bs@t\b|\bsat\b|\bmf-?e\b")
 MIN_BRAND_LENGTH = 4  # palavras curtas demais casariam com nomes aleatórios
 ORDER = {"pinpad": 0, "scanner": 1, "scale": 2, "printer": 3, "sat": 4, "cash_drawer": 5,
          "keyboard": 6, "biometric": 7, "card_reader": 8, "customer_display": 9, "touchscreen": 10,
-         "monitor": 11}
+         "monitor": 11, "serial_port": 12}
 
 
 def norm(value: Any) -> str:

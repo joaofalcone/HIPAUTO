@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import fcntl
 import os
 import select
+import struct
 import termios
 import time
 from contextlib import contextmanager
@@ -75,6 +77,16 @@ def exchange(fd: int, request: bytes, timeout: float, limit: int = 4096,
         elif data and complete is None:
             break
     return bytes(data)
+
+
+def modem_lines(fd: int) -> dict[str, bool] | None:
+    """Status lines driven by the attached device (CTS, DSR, DCD, RI); None when unsupported."""
+    try:
+        bits = struct.unpack("I", fcntl.ioctl(fd, termios.TIOCMGET, struct.pack("I", 0)))[0]
+    except OSError:
+        return None
+    return {"CTS": bool(bits & termios.TIOCM_CTS), "DSR": bool(bits & termios.TIOCM_DSR),
+            "DCD": bool(bits & termios.TIOCM_CAR), "RI": bool(bits & termios.TIOCM_RNG)}
 
 
 def port_in_use(port: str) -> bool:
