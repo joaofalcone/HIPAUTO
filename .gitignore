@@ -2,3 +2,4 @@ __pycache__/
 build/
 *.pyc
 hipauto-desktop-*.png
+tests/e2e/capturas/

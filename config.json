@@ -11,7 +11,5 @@
   "pinpad": {
     "request_hex": "05"
   },
-  "aliases": {
-    "ttyUSB0": "scale"
-  }
+  "aliases": {}
 }
